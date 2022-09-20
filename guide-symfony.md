@@ -57,6 +57,7 @@ composer require symfony/debug-bundle
 
 ```bash
 composer require --dev orm-fixtures
+> n
 
 composer require fakerphp/faker  
 
