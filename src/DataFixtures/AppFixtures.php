@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
         $clubs = [];
 
         $clubs_names = [];
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $club = new Club();
             $clubName = $findMeARefProvider->getClubName();
             while(in_array($clubName, $clubs_names)) {
@@ -47,7 +47,7 @@ class AppFixtures extends Fixture
 
         $types = [];
         $types_names = [];
-        for ($i =1; $i <=5; $i++) {
+        for ($i =1; $i <=6; $i++) {
             $type = new Type();
             $typeName = $findMeARefProvider->getTypeName();
             while(in_array($typeName, $types_names)) {
@@ -65,7 +65,7 @@ class AppFixtures extends Fixture
 
         $categories = [];
         $categories_names = [];
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             $category = new Category();
             $categoryName = $findMeARefProvider->getCategoryName();
             while(in_array($categoryName, $categories_names)) {
@@ -81,14 +81,13 @@ class AppFixtures extends Fixture
         //Team fixtures
 
         $teams = [];
-        for ($i = 1; $i <= 2; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $team = new Team();
             // the better name for a team is $club->getname . $category->getName but it's doesn't work yet
             $team->setName($faker->word());
-            // don't know how to code a random existing $category id, for the moment this is just last id create in the fixture.
-            $team->setCategory($category);
-            // same as category maybe it's possible to use __tostring function in club entity.
-            $team->setClub($club);
+            // choice random category in categories array just create warning to choose a number <= of categories created in fixture above
+            $team->setCategory($categories[mt_rand(0,5)]);
+            $team->setClub($clubs[mt_rand(0,9)]);
             $team->setCreatedAt(new \DateTimeImmutable("now"));
 
             $manager->persist($team);
