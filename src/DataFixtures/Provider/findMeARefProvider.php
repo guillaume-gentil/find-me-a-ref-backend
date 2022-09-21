@@ -29,6 +29,18 @@ class findMeARefProvider
         "finale",
     ];
 
+    private $category = [
+        "U9",
+        "U11",
+        "U15",
+        "U17",
+        "U20",
+        "Loisir",
+        "Régional",
+        "N4",
+        "N3",
+    ];
+
     /**
      * return random club's name
      */
@@ -43,5 +55,13 @@ class findMeARefProvider
     public function getTypeName()
     {
         return $this->type[array_rand($this->type)];
+    }
+
+    /**
+     * return random name of category
+     */
+    public function getCategoryName()
+    {
+        return $this->category[array_rand($this->category)];
     }
 }
