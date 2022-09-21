@@ -83,8 +83,8 @@ class AppFixtures extends Fixture
         $teams = [];
         for ($i = 1; $i <= 15; $i++) {
             $team = new Team();
-            // the better name for a team is $club->getname . $category->getName but it's doesn't work yet
-            $team->setName($faker->word());
+            // warning for the moment the name of club and category in the name of team is different than club and category name in the fk below
+            $team->setName(($clubs[mt_rand(0,9)]->getName()) . " " . ($categories[mt_rand(0,5)]->getName()));
             // choice random category in categories array just create warning to choose a number <= of categories created in fixture above
             $team->setCategory($categories[mt_rand(0,5)]);
             $team->setClub($clubs[mt_rand(0,9)]);
