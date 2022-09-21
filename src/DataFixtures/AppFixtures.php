@@ -29,12 +29,16 @@ class AppFixtures extends Fixture
             }
 
             $club->setName($clubName);
-            $club->setAddress($faker->address);
-            
+            $club->setAddress($faker->address());
+            $club->setZipCode($faker->randomNumber(6, true));
+            $club->setCreatedAt(new \DateTimeImmutable("now"));
+
+            $manager->persist($club);
+            $clubs[] = $club;
+            $clubs_names[] = $club->getName();
 
         }
 
-        
 
 
         $manager->flush();
