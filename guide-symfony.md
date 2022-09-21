@@ -159,6 +159,12 @@ dans le champ `token` on c/c le token pour s'identifier et pouvoir utiliser l'AP
 
 ## gérer les CORS Cross Origin Ressource Sharing
 
+pour que le navigateur autorise une requête fetch externe (sans ça, seules les requêtes provenant de la machine locale seront acceptées = "Same Origin")
+
+```bash
+composer require nelmio/cors-bundle
+```
+
 <https://github.com/nelmio/NelmioCorsBundle>
 permet d'accepter les requêtes d'un autre ordinateur sur notre API.
 
