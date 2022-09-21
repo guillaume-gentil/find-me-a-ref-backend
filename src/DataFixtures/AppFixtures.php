@@ -83,11 +83,11 @@ class AppFixtures extends Fixture
         $teams = [];
         for ($i = 1; $i <= 15; $i++) {
             $team = new Team();
-            // warning for the moment the name of club and category in the name of team is different than club and category name in the fk below
-            $team->setName(($clubs[mt_rand(0,9)]->getName()) . " " . ($categories[mt_rand(0,5)]->getName()));
             // choice random category in categories array just create warning to choose a number <= of categories created in fixture above
             $team->setCategory($categories[mt_rand(0,5)]);
             $team->setClub($clubs[mt_rand(0,9)]);
+            // warning the name of team take name of category and club just created above don't move setName above setCategory and setClub
+            $team->setName(($team->getClub()->getName()). " " . $team->getCategory()->getName());
             $team->setCreatedAt(new \DateTimeImmutable("now"));
 
             $manager->persist($team);
