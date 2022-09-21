@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\DataFixtures\Provider\findMeARefProvider;
 use App\Entity\Category;
 use App\Entity\Club;
+use App\Entity\Team;
 use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -14,7 +15,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        //add Provider class for real name of club in fixtures
+        //add Provider class for real name in fixtures
         $findMeARefProvider = new findMeARefProvider();
         
         //add Fakerphp in french for fixtures
@@ -42,6 +43,8 @@ class AppFixtures extends Fixture
 
         }
 
+        //type fixtures
+
         $types = [];
         $types_names = [];
         for ($i =1; $i <=5; $i++) {
@@ -58,6 +61,8 @@ class AppFixtures extends Fixture
             $types_names[] = $type->getName();
         }
 
+        //Category fixtures
+
         $categories = [];
         $categories_names = [];
         for ($i = 1; $i <= 10; $i++) {
@@ -71,6 +76,23 @@ class AppFixtures extends Fixture
 
             $manager->persist($category);
             $categories[] = $category;
+        }
+
+        //Team fixtures
+
+        $teams = [];
+        for ($i = 1; $i <= 2; $i++) {
+            $team = new Team();
+            // the better name for a team is $club->getname . $category->getName but it's doesn't work yet
+            $team->setName($faker->word());
+            // don't know how to code a random existing $category id, for the moment this is just last id create in the fixture.
+            $team->setCategory($category);
+            // same as category
+            $team->setClub($club);
+            $team->setCreatedAt(new \DateTimeImmutable("now"));
+
+            $manager->persist($team);
+            $teams[] = $team;
         }
 
         $manager->flush();
