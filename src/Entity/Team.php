@@ -28,6 +28,12 @@ class Team
      */
     private $club;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="teams")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +59,18 @@ class Team
     public function setClub(?Club $club): self
     {
         $this->club = $club;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
