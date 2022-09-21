@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\DataFixtures\Provider\findMeARefProvider;
 use App\Entity\Club;
+use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -18,6 +19,7 @@ class AppFixtures extends Fixture
         //add Fakerphp in french for fixtures
         $faker = Factory::create('fr_FR');
 
+        // Empty array for save club's name and don't have two clubs with the same name.
         $clubs = [];
 
         $clubs_names = [];
@@ -39,7 +41,21 @@ class AppFixtures extends Fixture
 
         }
 
+        $types = [];
+        $types_names = [];
+        for ($i =1; $i <=5; $i++) {
+            $type = new Type();
+            $typeName = $findMeARefProvider->getTypeName();
+            while(in_array($typeName, $types_names)) {
+                $typeName = $findMeARefProvider->getTypeName();
+            }
+            $type->setName($typeName);
+            $type->setCreatedAt(new \DateTimeImmutable("now"));
 
+            $manager->persist($type);
+            $types[] = $type;
+            $types_names[] = $type->getName();
+        }
 
         $manager->flush();
     }
