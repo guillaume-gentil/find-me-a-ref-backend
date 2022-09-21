@@ -59,9 +59,14 @@ class AppFixtures extends Fixture
         }
 
         $categories = [];
+        $categories_names = [];
         for ($i = 1; $i <= 10; $i++) {
             $category = new Category();
-            $category->setName($faker->word());
+            $categoryName = $findMeARefProvider->getCategoryName();
+            while(in_array($categoryName, $categories_names)) {
+                $categoryName = $findMeARefProvider->getCategoryName();
+            }
+            $category->setName($categoryName);
             $category->setCreatedAt(new \DateTimeImmutable("now"));
 
             $manager->persist($category);
