@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\DataFixtures\Provider\findMeARefProvider;
+use App\Entity\Category;
 use App\Entity\Club;
 use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -55,6 +56,16 @@ class AppFixtures extends Fixture
             $manager->persist($type);
             $types[] = $type;
             $types_names[] = $type->getName();
+        }
+
+        $categories = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $category = new Category();
+            $category->setName($faker->word());
+            $category->setCreatedAt(new \DateTimeImmutable("now"));
+
+            $manager->persist($category);
+            $categories[] = $category;
         }
 
         $manager->flush();
