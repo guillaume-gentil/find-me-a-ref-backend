@@ -87,7 +87,7 @@ class AppFixtures extends Fixture
             $team->setName($faker->word());
             // don't know how to code a random existing $category id, for the moment this is just last id create in the fixture.
             $team->setCategory($category);
-            // same as category
+            // same as category maybe it's possible to use __tostring function in club entity.
             $team->setClub($club);
             $team->setCreatedAt(new \DateTimeImmutable("now"));
 
