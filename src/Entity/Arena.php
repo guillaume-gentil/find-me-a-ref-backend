@@ -17,25 +17,34 @@ class Arena
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @groups({"games_get_collection"})
+     * @Groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @groups({"games_get_collection"})
+     * @Groups({"games_get_collection"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @groups({"games_get_collection"})
+     * @Groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $address;
 
     /**
      * @ORM\Column(type="integer")
-     * @groups({"games_get_collection"})
+     * @Groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $zipCode;
 
