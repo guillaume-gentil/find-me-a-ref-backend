@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\DataFixtures\Provider\findMeARefProvider;
+use App\Entity\Arena;
 use App\Entity\Category;
 use App\Entity\Club;
 use App\Entity\Team;
@@ -92,6 +93,22 @@ class AppFixtures extends Fixture
 
             $manager->persist($team);
             $teams[] = $team;
+        }
+
+        //Arena fixtures
+
+        $arenas = [];
+        for ($i = 1; $i <= 15; $i++) {
+            $arena = new Arena();
+
+            $arena->setName($faker->company());
+            $arena->setAddress($faker->address());
+            $arena->setZipCode($faker->randomNumber(6, true));
+            $arena->setCreatedAt(new \DateTimeImmutable("now"));
+
+            $manager->persist($arena);
+            $arenas[] = $arena;
+
         }
 
         $manager->flush();
