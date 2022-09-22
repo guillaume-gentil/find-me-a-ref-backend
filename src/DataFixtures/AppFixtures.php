@@ -137,6 +137,9 @@ class AppFixtures extends Fixture
 
         }
 
+        //Game fixtures
+
+        
         $manager->flush();
     }
 }
