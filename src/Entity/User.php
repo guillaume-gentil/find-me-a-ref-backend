@@ -17,11 +17,13 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @groups({"games_get_collection"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @groups({"games_get_collection"})
      */
     private $firstname;
 
@@ -32,6 +34,7 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @groups({"games_get_collection"})
      */
     private $email;
 
@@ -52,6 +55,7 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @groups({"games_get_collection"})
      */
     private $level;
 

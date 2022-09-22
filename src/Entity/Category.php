@@ -22,6 +22,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @groups({"games_get_collection"})
      */
     private $name;
 

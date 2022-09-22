@@ -20,7 +20,7 @@ class GameController extends AbstractController
     public function getGamesCollection(GameRepository $gameRepository): JsonResponse
     {
         $games = $gameRepository->findAll();
-
+        //for data in array to avoid JSON hijacking we send data response under this form ['games' => $games]
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_get_collection'
         ]);
