@@ -151,6 +151,12 @@ class AppFixtures extends Fixture
             //add two teams with two differents parts of teams array for not duplicates same team.
             $game->addTeam($teams[mt_rand(0,6)]);
             $game->addTeam($teams[mt_rand(7,14)]);
+
+            //add random user on games mini=0 max=2
+            for($j = 1; $j <= mt_rand(0,2); $j++) {
+                $game->addUser($users[mt_rand(0,19)]);
+            }
+
             
             $manager->persist($game);
             $games[] = $game;
