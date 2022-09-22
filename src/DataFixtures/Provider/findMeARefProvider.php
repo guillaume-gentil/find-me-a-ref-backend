@@ -41,6 +41,13 @@ class findMeARefProvider
         "N3",
     ];
 
+    private $refereeLevel = [
+        "D1",
+        "D2",
+        "D3",
+        "D4"
+    ];
+
     /**
      * return random club's name
      */
@@ -63,5 +70,13 @@ class findMeARefProvider
     public function getCategoryName()
     {
         return $this->category[array_rand($this->category)];
+    }
+
+    /**
+     * return random level of referee
+     */
+    public function getRefereeLevel()
+    {
+        return $this->refereeLevel[array_rand($this->refereeLevel)];
     }
 }

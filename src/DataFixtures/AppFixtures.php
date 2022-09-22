@@ -8,6 +8,7 @@ use App\Entity\Category;
 use App\Entity\Club;
 use App\Entity\Team;
 use App\Entity\Type;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -35,7 +36,7 @@ class AppFixtures extends Fixture
 
             $club->setName($clubName);
             $club->setAddress($faker->address());
-            $club->setZipCode($faker->randomNumber(6, true));
+            $club->setZipCode($faker->randomNumber(5, true));
             $club->setCreatedAt(new \DateTimeImmutable("now"));
 
             $manager->persist($club);
@@ -103,11 +104,36 @@ class AppFixtures extends Fixture
 
             $arena->setName($faker->company());
             $arena->setAddress($faker->address());
-            $arena->setZipCode($faker->randomNumber(6, true));
+            $arena->setZipCode($faker->randomNumber(5, true));
             $arena->setCreatedAt(new \DateTimeImmutable("now"));
 
             $manager->persist($arena);
             $arenas[] = $arena;
+
+        }
+
+        //User fixtures
+
+        $users = [];
+        
+        for ($i = 1; $i <= 20; $i++) {
+            $user = new User();
+
+            $user->setFirstname($faker->firstName());
+            $user->setLastname($faker->lastName());
+            $user->setEmail($faker->email());
+            $user->setRole('ROLE_REFEREE');
+            $user->setPassword('mdpfix');
+            $user->setLicenceId($faker->randomNumber(6, true));
+
+            $refereeLevel = $findMeARefProvider->getRefereeLevel();
+            $user->setLevel($refereeLevel);
+            $user->setAddress($faker->address());
+            $user->setZipCode($faker->randomNumber(5, true));
+            $user->setCreatedAt(new \DateTimeImmutable("now"));
+
+            $manager->persist($user);
+            $users[] = $user;
 
         }
 
