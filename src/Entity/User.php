@@ -17,24 +17,34 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @groups({"games_get_collection"})
+     * @Groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @groups({"games_get_collection"})
+     * @Groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"games_get_item"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @groups({"games_get_collection"})
+     * @groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $email;
 
@@ -50,12 +60,16 @@ class User
 
     /**
      * @ORM\Column(type="integer", nullable=true, unique=true)
+     * @Groups({"games_get_item"})
      */
     private $licenceId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @groups({"games_get_collection"})
+     * @groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $level;
 

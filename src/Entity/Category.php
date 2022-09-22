@@ -17,12 +17,16 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"games_get_item"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @groups({"games_get_collection"})
+     * @Groups({
+     * "games_get_collection",
+     * "games_get_item"
+     * })
      */
     private $name;
 
