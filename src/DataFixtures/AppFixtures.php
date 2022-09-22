@@ -6,6 +6,7 @@ use App\DataFixtures\Provider\findMeARefProvider;
 use App\Entity\Arena;
 use App\Entity\Category;
 use App\Entity\Club;
+use App\Entity\Game;
 use App\Entity\Team;
 use App\Entity\Type;
 use App\Entity\User;
@@ -139,7 +140,22 @@ class AppFixtures extends Fixture
 
         //Game fixtures
 
-        
+        $games = [];
+        for($i = 1; $i <= 20; $i++) {
+            $game = new Game();
+
+            $game->setDate($faker->dateTimeBetween('+1 week' , '+5 week'));
+            $game->setCreatedAt(new \DateTimeImmutable("now"));
+            $game->setArena($arenas[mt_rand(0,14)]);
+            $game->setType($types[mt_rand(0,5)]);
+            //add two teams with two differents parts of teams array for not duplicates same team.
+            $game->addTeam($teams[mt_rand(0,6)]);
+            $game->addTeam($teams[mt_rand(7,14)]);
+            
+            $manager->persist($game);
+            $games[] = $game;
+        }
+
         $manager->flush();
     }
 }
