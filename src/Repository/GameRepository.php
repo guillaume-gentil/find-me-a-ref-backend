@@ -39,6 +39,15 @@ class GameRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByGameOrderedByDate()
+    {
+        return $this->createQueryBuilder('g')
+            ->orderBy('g.date')
+            ->getQuery()
+            ->getResult();
+
+    }
+
 //    /**
 //     * @return Game[] Returns an array of Game objects
 //     */

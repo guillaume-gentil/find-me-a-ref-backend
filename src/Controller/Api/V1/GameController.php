@@ -29,6 +29,19 @@ class GameController extends AbstractController
     }
 
     /**
+     * list of games order by date
+     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
+     */
+    public function gamesByDates(GameRepository $gameRepository): JsonResponse
+    {
+        $games = $gameRepository->findByGameOrderedByDate();
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_get_collection'
+        ]);
+
+    }
+
+    /**
      * Get on game by Id
      * @Route("/games/{id}", name="games_get_item", methods={"GET"}, requirements={"id"="\d+"})
      */
@@ -36,7 +49,7 @@ class GameController extends AbstractController
     {
         // gestion 404
         if(is_null($game)) {
-            return $this->json(['error' => 'Movie not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Game not found !'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($game, Response::HTTP_OK, [], [
