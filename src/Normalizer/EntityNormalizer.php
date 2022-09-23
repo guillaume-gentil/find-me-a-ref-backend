@@ -1,6 +1,5 @@
-<?php
-
-namespace App\Serializer;
+<?php declare (strict_types = 1);
+namespace App\Normalizer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -8,7 +7,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 /**
  * Entity normalizer
  */
-class EntityDenormalizer implements DenormalizerInterface
+class EntityNormalizer implements DenormalizerInterface
 {
     /** @var EntityManagerInterface **/
     protected $em;
@@ -19,10 +18,6 @@ class EntityDenormalizer implements DenormalizerInterface
     }
 
     /**
-     * Cette méthode permet de vérifier si le denormalizer s'applique sur la donnée
-     * $data -> ID de l'arena
-     * $type -> La classe vers laquelle dénormaliser $data
-     * 
      * @inheritDoc
      */
     public function supportsDenormalization($data, $type, $format = null)
@@ -36,6 +31,5 @@ class EntityDenormalizer implements DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         return $this->em->find($class, $data);
-        // EntityManagerInterface::find() fonctionne comme les find() des repos
     }
 }

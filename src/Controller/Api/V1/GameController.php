@@ -2,8 +2,11 @@
 
 namespace App\Controller\Api\V1;
 
+use App\Entity\Arena;
 use App\Entity\Game;
+use App\Repository\ArenaRepository;
 use App\Repository\GameRepository;
+use App\Repository\TypeRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Serializer\EntityDenormalizer;
 
 /**
  * @route("/api/v1", name="api_v1")
@@ -65,12 +67,23 @@ class GameController extends AbstractController
      * Add new game
      * @Route("/games", name="games_add", methods={"POST"})
      */
-    public function addGame(Request $request, SerializerInterface $serializer, ManagerRegistry $doctrine, ValidatorInterface $validator)
+    public function addGame(Request $request, SerializerInterface $serializer, ManagerRegistry $doctrine, ArenaRepository $arenaRepository, TypeRepository $typeRepository/*, ValidatorInterface $validator*/)
     {
         $json = $request->getContent();
-        
+        //dd($json);
         $game = $serializer->deserialize($json, Game::class, 'json');
-        dd($game);
+
+        //Permet de récupérer le contenu sous forme de tableau affin d'extraire l'id de l'arena et du type pour les setter après.
+        //impossible sans, juste avec le serializer on récupère qu'une entité vide à chaque fois pour Arena et Type. dans l'objet game
+        $content = $request->toArray();
+        $arenaId = $content['arenaId'] ?? -1;
+        $typeId = $content['typeId'] ?? -1;
+
+        $game->setArena($arenaRepository->find($arenaId));
+        $game->setType($typeRepository->find($typeId));
+
+        //dd($game);
+
         // à décommenté dès qu'on auras mis des @assets dans les entity pour contraindre les champs de validation
         //$errors = $validator->validate($game);
         //dd($errors);
@@ -89,6 +102,7 @@ class GameController extends AbstractController
 
         $manager = $doctrine->getManager();
         $manager->persist($game);
+        
 
         
         $manager->flush();

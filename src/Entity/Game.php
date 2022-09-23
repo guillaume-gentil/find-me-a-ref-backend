@@ -44,7 +44,7 @@ class Game
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Arena::class, inversedBy="games")
+     * @ORM\ManyToOne(targetEntity=Arena::class, inversedBy="games", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_get_collection",
@@ -53,7 +53,7 @@ class Game
     private $arena;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="games")
+     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="games", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_get_collection",
