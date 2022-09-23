@@ -257,3 +257,11 @@ configurer `DATABASE_URL="mysql://explorateur:Ereul9Aeng@127.0.0.1:3306/oflix?se
 Dans le terminale de cde pour créer ma BDD
 
 `bin/console doctrine:database:create`
+
+## valider les données reçues en JSON
+
+installer le bundle
+
+```bash
+composer require symfony/validator doctrine/annotations
+```

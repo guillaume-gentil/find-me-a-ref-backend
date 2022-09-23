@@ -3,12 +3,16 @@
 namespace App\Controller\Api\V1;
 
 use App\Entity\Game;
+use App\Entity\Type;
 use App\Repository\GameRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @route("/api/v1", name="api_v1")
@@ -56,4 +60,42 @@ class GameController extends AbstractController
             'groups' => 'games_get_item'
         ]);
     }
+
+    /**
+     * Add new game
+     * @Route("/games", name="games_add", methods={"POST"})
+     */
+    public function addGame(Request $request, SerializerInterface $serializer, ManagerRegistry $doctrine, ValidatorInterface $validator)
+    {
+        $json = $request->getContent();
+        //dd($json);
+        $game = $serializer->deserialize($json, Game::class, 'json');
+
+        $errors = $validator->validate($game);
+
+        if (count($errors) > 0) {
+            $cleanErrors = [];
+            /**
+             * @var ConstraintViolation $error
+             */
+            foreach($errors as $error) {
+                $property = $error->getPropertyPath();
+                $message = $error->getMessage();
+                $cleanErrors[$property][] = $message;
+            }
+            return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+        }
+
+        $manager = $doctrine->getManager();
+        $manager->persist($game);
+        
+        $manager->flush();
+
+        return $this->json($game, Response::HTTP_CREATED, [], [
+            'groups' => 'games_get_item'
+        ]);
+        
+    }
+
+
 }

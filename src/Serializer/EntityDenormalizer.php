@@ -20,7 +20,7 @@ class EntityDenormalizer implements DenormalizerInterface
 
     /**
      * Cette méthode permet de vérifier si le denormalizer s'applique sur la donnée
-     * $data -> ID du genre
+     * $data -> ID de l'arena
      * $type -> La classe vers laquelle dénormaliser $data
      * 
      * @inheritDoc
