@@ -20,7 +20,8 @@ class Type
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_collection"
+     * "types_collection",
+     * "types_get_item"
      * })
      */
     private $id;
@@ -30,7 +31,8 @@ class Type
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_collection"
+     * "types_collection",
+     * "types_get_item"
      * })
      */
     private $name;
@@ -47,6 +49,7 @@ class Type
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="type")
+     * @Groups({"types_get_item"})
      */
     private $games;
 

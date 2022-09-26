@@ -20,7 +20,8 @@ class Arena
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $id;
@@ -30,7 +31,8 @@ class Arena
      * @Assert\NotBlank
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $name;
@@ -39,7 +41,8 @@ class Arena
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $address;
@@ -48,7 +51,8 @@ class Arena
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $zipCode;

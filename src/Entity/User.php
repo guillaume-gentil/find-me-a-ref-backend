@@ -19,7 +19,8 @@ class User
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $id;
@@ -28,7 +29,8 @@ class User
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $firstname;
@@ -43,7 +45,8 @@ class User
      * @ORM\Column(type="string", length=255, unique=true)
      * @groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $email;
@@ -60,7 +63,10 @@ class User
 
     /**
      * @ORM\Column(type="integer", nullable=true, unique=true)
-     * @Groups({"games_get_item"})
+     * @Groups({
+     * "games_get_item",
+     * "types_get_item"
+     * })
      */
     private $licenceId;
 
@@ -68,7 +74,8 @@ class User
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $level;

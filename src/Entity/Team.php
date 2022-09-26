@@ -19,7 +19,8 @@ class Team
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $id;
@@ -28,7 +29,8 @@ class Team
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $name;
@@ -38,7 +40,8 @@ class Team
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $club;

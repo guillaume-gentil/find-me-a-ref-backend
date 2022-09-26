@@ -19,7 +19,8 @@ class Game
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $id;
@@ -28,7 +29,8 @@ class Game
      * @ORM\Column(type="datetime")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $date;
@@ -48,7 +50,9 @@ class Game
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"})
+     * "games_get_item",
+     * "types_get_item"
+     * })
      */
     private $arena;
 
@@ -57,7 +61,7 @@ class Game
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
      * })
      */
     private $type;
@@ -66,7 +70,8 @@ class Game
      * @ORM\ManyToMany(targetEntity=Team::class, inversedBy="games")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $teams;
@@ -75,7 +80,8 @@ class Game
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="games")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $users;

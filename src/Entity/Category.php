@@ -17,7 +17,10 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"games_get_item"})
+     * @Groups({
+     * "games_get_item",
+     * "types_get_item"
+     * })
      */
     private $id;
 
@@ -25,7 +28,8 @@ class Category
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_get_item"
      * })
      */
     private $name;
