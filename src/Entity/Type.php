@@ -19,7 +19,8 @@ class Type
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_collection"
      * })
      */
     private $id;
@@ -28,7 +29,8 @@ class Type
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_get_collection",
-     * "games_get_item"
+     * "games_get_item",
+     * "types_collection"
      * })
      */
     private $name;

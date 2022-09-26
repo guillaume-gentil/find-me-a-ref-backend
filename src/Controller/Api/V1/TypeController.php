@@ -2,20 +2,27 @@
 
 namespace App\Controller\Api\V1;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\TypeRepository;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @route("/api/v1", name="api_v1")
+ */
 class TypeController extends AbstractController
 {
     /**
-     * @Route("/api/v1/type", name="app_api_v1_type")
+     * get type list
+     * @Route("/types", name="types", methods={"GET"})
      */
-    public function index(): JsonResponse
+    public function getTypes(TypeRepository $typeRepository): JsonResponse
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/Api/V1/TypeController.php',
+        $types = $typeRepository->findAll();
+
+        return $this->json(['types' => $types], Response::HTTP_OK, [], [
+            'groups' => 'types_collection'
         ]);
     }
 }
