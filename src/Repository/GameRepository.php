@@ -45,7 +45,14 @@ class GameRepository extends ServiceEntityRepository
             ->orderBy('g.date')
             ->getQuery()
             ->getResult();
+    }
 
+    public function findGamesOrederByType()
+    {
+        return $this->createQueryBuilder('g')
+            ->orderBy('g.type', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

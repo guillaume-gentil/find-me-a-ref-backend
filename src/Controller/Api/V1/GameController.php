@@ -47,6 +47,21 @@ class GameController extends AbstractController
     }
 
     /**
+     * list of games order by type of games
+     * @Route("/games-by-types", name="games_by_types",methods={"GET"})
+     */
+    public function gamesByTypes(GameRepository $gameRepository): JsonResponse
+    {;
+
+        $games = $gameRepository->findGamesOrederByType();
+        
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_get_collection'
+        ]);
+
+    }
+
+    /**
      * Get on game by Id
      * @Route("/games/{id}", name="games_get_item", methods={"GET"}, requirements={"id"="\d+"})
      */
