@@ -2,20 +2,26 @@
 
 namespace App\Controller\Api\V1;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\ArenaRepository;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @route("/api/v1", name="api_v1")
+ */
 class ArenaController extends AbstractController
 {
     /**
-     * @Route("/api/v1/arena", name="app_api_v1_arena")
+     * @Route("/arenas", name="arenas", methods={"GET"})
      */
-    public function index(): JsonResponse
+    public function getArenas(ArenaRepository $arenaRepository): JsonResponse
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/Api/V1/ArenaController.php',
+        $arenas = $arenaRepository->findAll();
+
+        return $this->json(['arenas' => $arenas], Response::HTTP_OK, [], [
+            'groups' => 'games_get_collection'
         ]);
     }
 }
