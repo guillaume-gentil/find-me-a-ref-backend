@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api\V1;
 
-use App\Entity\Arena;
 use App\Entity\Game;
 use App\Repository\ArenaRepository;
 use App\Repository\GameRepository;
@@ -73,7 +72,7 @@ class GameController extends AbstractController
         //dd($json);
         $game = $serializer->deserialize($json, Game::class, 'json');
 
-        //Permet de récupérer le contenu sous forme de tableau affin d'extraire l'id de l'arena et du type pour les setter après.
+        //Permet de récupérer le contenu sous forme de tableau afin d'extraire l'id de l'arena et du type pour les setter après.
         //impossible sans, juste avec le serializer on récupère qu'une entité vide à chaque fois pour Arena et Type. dans l'objet game
         $content = $request->toArray();
         $arenaId = $content['arenaId'] ?? -1;
@@ -84,7 +83,7 @@ class GameController extends AbstractController
 
         //dd($game);
 
-        // à décommenté dès qu'on auras mis des @assets dans les entity pour contraindre les champs de validation
+        // à décommenté dès qu'on auras mis des @asserts dans les entity pour contraindre les champs de validation
         //$errors = $validator->validate($game);
         //dd($errors);
         /*if (count($errors) > 0) {
@@ -103,7 +102,6 @@ class GameController extends AbstractController
         $manager = $doctrine->getManager();
         $manager->persist($game);
         
-
         
         $manager->flush();
 

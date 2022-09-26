@@ -21,7 +21,7 @@ class findMeARefProvider
     private $type = [
         "match amical",
         "match de poule",
-        "match allé",
+        "match aller",
         "match retour",
         "match de barrage",
         "quart de finale",
