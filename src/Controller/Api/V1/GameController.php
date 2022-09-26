@@ -39,7 +39,7 @@ class GameController extends AbstractController
      */
     public function gamesByDates(GameRepository $gameRepository): JsonResponse
     {
-        $games = $gameRepository->findByGameOrderedByDate();
+        $games = $gameRepository->findGamesOrderByDate();
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_get_collection'
         ]);
@@ -53,8 +53,22 @@ class GameController extends AbstractController
     public function gamesByTypes(GameRepository $gameRepository): JsonResponse
     {;
 
-        $games = $gameRepository->findGamesOrederByType();
+        $games = $gameRepository->findGamesOrderByType();
         
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_get_collection'
+        ]);
+
+    }
+
+    /**
+     * Get games order by number of referee
+     * @Route("/games-by-ref", name="games_by_ref",methods={"GET"})
+     */
+    public function gamesByRef(GameRepository $gameRepository): JsonResponse
+    {
+        $games = $gameRepository->findGamesOrderByNumberOfUser();
+
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_get_collection'
         ]);
@@ -84,19 +98,17 @@ class GameController extends AbstractController
     public function addGame(Request $request, SerializerInterface $serializer, ManagerRegistry $doctrine, ArenaRepository $arenaRepository, TypeRepository $typeRepository/*, ValidatorInterface $validator*/)
     {
         $json = $request->getContent();
-        //dd($json);
+        
         $game = $serializer->deserialize($json, Game::class, 'json');
 
         //Permet de récupérer le contenu sous forme de tableau afin d'extraire l'id de l'arena et du type pour les setter après.
-        //impossible sans, juste avec le serializer on récupère qu'une entité vide à chaque fois pour Arena et Type. dans l'objet game
+        //impossible sans, juste avec le serializer on récupère qu'une entité vide à chaque fois pour Arena et Type dans l'objet game.
         $content = $request->toArray();
         $arenaId = $content['arenaId'] ?? -1;
         $typeId = $content['typeId'] ?? -1;
 
         $game->setArena($arenaRepository->find($arenaId));
         $game->setType($typeRepository->find($typeId));
-
-        //dd($game);
 
         // à décommenté dès qu'on auras mis des @asserts dans les entity pour contraindre les champs de validation
         //$errors = $validator->validate($game);
@@ -116,7 +128,6 @@ class GameController extends AbstractController
 
         $manager = $doctrine->getManager();
         $manager->persist($game);
-        
         
         $manager->flush();
 

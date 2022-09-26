@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Game;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Validator\Constraints\Count;
 
 /**
  * @extends ServiceEntityRepository<Game>
@@ -39,7 +41,7 @@ class GameRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByGameOrderedByDate()
+    public function findGamesOrderByDate()
     {
         return $this->createQueryBuilder('g')
             ->orderBy('g.date')
@@ -47,10 +49,20 @@ class GameRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findGamesOrederByType()
+    public function findGamesOrderByType()
     {
         return $this->createQueryBuilder('g')
             ->orderBy('g.type', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findGamesOrderByNumberOfUser()
+    {
+        return $this->createQueryBuilder('g')
+            ->leftJoin('g.users', 'users')
+            ->orderBy('COUNT(users)')
+            ->groupBy('g')
             ->getQuery()
             ->getResult();
     }
