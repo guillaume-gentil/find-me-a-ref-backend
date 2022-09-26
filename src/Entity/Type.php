@@ -21,7 +21,8 @@ class Type
      * "games_get_collection",
      * "games_get_item",
      * "types_collection",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $id;
@@ -32,7 +33,8 @@ class Type
      * "games_get_collection",
      * "games_get_item",
      * "types_collection",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $name;

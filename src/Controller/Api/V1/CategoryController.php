@@ -2,20 +2,42 @@
 
 namespace App\Controller\Api\V1;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Category;
+use App\Repository\CategoryRepository;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @route("/api/v1", name="api_v1")
+ */
 class CategoryController extends AbstractController
 {
     /**
-     * @Route("/api/v1/category", name="app_api_v1_category")
+     * @Route("/categories", name="categories", methods={"GET"} )
      */
-    public function index(): JsonResponse
+    public function getCategories(CategoryRepository $categoryRepository): JsonResponse
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/Api/V1/CategoryController.php',
+        $categories = $categoryRepository->findAll();
+
+        return $this->json(['categories' => $categories], Response::HTTP_OK, [], [
+            'groups' => 'games_get_collection'
         ]);
+    }
+
+    /**
+     * Get category by Id
+     * @Route("/categories/{id}", name="categories_by_id", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getCategoryItem(Category $category = null): JsonResponse
+    {
+        if(is_null($category)) {
+            return $this->json(['error' => 'Category not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($category, Response::HTTP_OK, [], [
+            'groups' => 'categories_get_item'
+        ]); 
     }
 }

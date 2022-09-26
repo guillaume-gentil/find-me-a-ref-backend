@@ -21,7 +21,8 @@ class Arena
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $id;
@@ -32,7 +33,8 @@ class Arena
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $name;
@@ -42,7 +44,8 @@ class Arena
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $address;
@@ -52,7 +55,8 @@ class Arena
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $zipCode;

@@ -20,7 +20,8 @@ class Team
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $id;
@@ -30,7 +31,8 @@ class Team
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $name;
@@ -41,7 +43,8 @@ class Team
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $club;
@@ -68,6 +71,9 @@ class Team
 
     /**
      * @ORM\ManyToMany(targetEntity=Game::class, mappedBy="teams")
+     * @Groups({
+     * "categories_get_item"
+     * })
      */
     private $games;
 

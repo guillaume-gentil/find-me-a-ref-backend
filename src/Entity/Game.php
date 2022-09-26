@@ -20,7 +20,9 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
+     * })
      * })
      */
     private $id;
@@ -30,7 +32,9 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
+     * })
      * })
      */
     private $date;
@@ -51,7 +55,9 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
+     * })
      * })
      */
     private $arena;
@@ -62,6 +68,7 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
+     * "categories_get_item"
      * })
      */
     private $type;
@@ -81,7 +88,8 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "categories_get_item"
      * })
      */
     private $users;
