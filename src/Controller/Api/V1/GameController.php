@@ -3,10 +3,12 @@
 namespace App\Controller\Api\V1;
 
 use App\Entity\Game;
+use App\Entity\User;
 use App\Repository\ArenaRepository;
 use App\Repository\GameRepository;
 use App\Repository\TypeRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use ProxyManager\Factory\RemoteObject\Adapter\JsonRpc;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -123,5 +125,52 @@ class GameController extends AbstractController
         return $this->json($game, Response::HTTP_CREATED, [], [
             'groups' => 'game_item'
         ]);
+    }
+
+    /**
+     * Add user (referee) on a game
+     * @Route("/games/{id}", name="game_by_id", methods={"PATCH"}, requirements={"id"="\d+"})
+     */
+    public function addUserOnGame(Game $game = null, Request $request, SerializerInterface $serializer)
+    {
+        // requête du front :
+        // {
+        //     "game_id": 25,
+        //     "user_id": 2
+        // }
+
+        //? filtre la table game selon game_id
+        //? compare user_id du front avec les user_id de la table
+
+        
+        //? même début de game/{id} => vérifier si  $game existe, sinon => 404
+        // manage 404 error
+        //dd($game);
+        if(is_null($game)) {
+            return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        
+        //$json = $request->getContent();
+        //dd($json);
+        
+        //$game = $serializer->deserialize($json, Game::class, 'json');
+
+        $content = $request->toArray();
+        $userId = $content['user'] ?? -1;
+        
+        $game->addUser(User $userId);
+
+        dd($game);
+        //? vérifier user id valide
+
+        //? si déjà 2 users retourner une erreur
+
+        //? si userid transmis = current userid => c'est un arbitre qui se désengage $game->removeUser
+
+        //? si userid différent de current userid et si count user < 2
+        //? si $game exite $game->addUser(user id transmis par le front)
+        return $this->json('Ça marche !', Response::HTTP_CREATED);
+
     }
 }
