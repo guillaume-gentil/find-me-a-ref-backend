@@ -18,9 +18,9 @@ class Club
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -29,10 +29,10 @@ class Club
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */

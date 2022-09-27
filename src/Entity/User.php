@@ -20,10 +20,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -32,10 +32,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -43,17 +43,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"games_get_item"})
+     * @Groups({"game_item"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      * @groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -73,9 +73,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="integer", nullable=true, unique=true)
      * @Groups({
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -84,10 +84,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */

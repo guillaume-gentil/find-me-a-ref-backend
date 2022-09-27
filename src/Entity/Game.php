@@ -18,10 +18,10 @@ class Game
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -30,10 +30,10 @@ class Game
     /**
      * @ORM\Column(type="datetime")
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -53,10 +53,10 @@ class Game
      * @ORM\ManyToOne(targetEntity=Arena::class, inversedBy="games", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * })
      */
     private $arena;
@@ -65,9 +65,9 @@ class Game
      * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="games", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -76,9 +76,9 @@ class Game
     /**
      * @ORM\ManyToMany(targetEntity=Team::class, inversedBy="games")
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
      * "games_by_arena"
      * })
      */
@@ -87,10 +87,10 @@ class Game
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="games")
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */

@@ -49,14 +49,6 @@ class GameRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findGamesOrderByType()
-    {
-        return $this->createQueryBuilder('g')
-            ->orderBy('g.type', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findGamesOrderByNumberOfUser()
     {
         return $this->createQueryBuilder('g')

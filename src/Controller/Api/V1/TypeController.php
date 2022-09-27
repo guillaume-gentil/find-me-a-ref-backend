@@ -15,7 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class TypeController extends AbstractController
 {
     /**
-     * get type list
      * @Route("/types", name="types", methods={"GET"})
      */
     public function getTypes(TypeRepository $typeRepository): JsonResponse
@@ -29,16 +28,16 @@ class TypeController extends AbstractController
 
     /**
      * Get type by Id
-     * @Route("/types/{id}", name="types_by_id", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function getTypeItem(Type $type = null): JsonResponse
+    public function getGamesByType(Type $type = null): JsonResponse
     {
         if(is_null($type)) {
-            return $this->json(['error' => 'Type not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($type, Response::HTTP_OK, [], [
-            'groups' => 'types_get_item'
+            'groups' => 'games_by_type'
         ]); 
     }
 }

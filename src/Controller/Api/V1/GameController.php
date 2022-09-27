@@ -21,73 +21,60 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class GameController extends AbstractController
 {
     /**
-     * get game's list
-     * @Route("/games", name="games_get_collection", methods={"GET"})
+     * Get game's list
+     * @Route("/games", name="games_collection", methods={"GET"})
      */
     public function getGamesCollection(GameRepository $gameRepository): JsonResponse
     {
         $games = $gameRepository->findAll();
-        //for data in array to avoid JSON hijacking we send data response under this form ['games' => $games]
+
+        // for data in array to avoid JSON hijacking we send data response under this form ['games' => $games]
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_get_collection'
+            'groups' => 'games_collection'
         ]);
     }
 
     /**
-     * list of games order by date
+     * List of games order by date
      * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
      */
-    public function gamesByDates(GameRepository $gameRepository): JsonResponse
+    public function getGamesByDates(GameRepository $gameRepository): JsonResponse
     {
         $games = $gameRepository->findGamesOrderByDate();
+
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_get_collection'
+            'groups' => 'games_collection'
         ]);
 
     }
 
     /**
-     * list of games order by type of games
-     * @Route("/games-by-types", name="games_by_types",methods={"GET"})
+     * Get games order by number of users (referee)
+     * @Route("/games-by-users", name="games_by_users", methods={"GET"})
      */
-    public function gamesByTypes(GameRepository $gameRepository): JsonResponse
-    {;
-
-        $games = $gameRepository->findGamesOrderByType();
-        
-        return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_get_collection'
-        ]);
-
-    }
-
-    /**
-     * Get games order by number of referee
-     * @Route("/games-by-ref", name="games_by_ref",methods={"GET"})
-     */
-    public function gamesByRef(GameRepository $gameRepository): JsonResponse
+    public function getGamesByUsers(GameRepository $gameRepository): JsonResponse
     {
         $games = $gameRepository->findGamesOrderByNumberOfUser();
 
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_get_collection'
+            'groups' => 'games_collection'
         ]);
 
     }
 
     /**
-     * Get on game by Id
-     * @Route("/games/{id}", name="games_get_item", methods={"GET"}, requirements={"id"="\d+"})
+     * Get one game by Id
+     * @Route("/games/{id}", name="game_by_id", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function getGameItem(Game $game = null): JsonResponse
+    public function getGameById(Game $game = null): JsonResponse
     {
-        // gestion 404
+        // manage 404 error
         if(is_null($game)) {
-            return $this->json(['error' => 'Game not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($game, Response::HTTP_OK, [], [
-            'groups' => 'games_get_item'
+            'groups' => 'game_item'
         ]);
     }
 
@@ -101,13 +88,15 @@ class GameController extends AbstractController
         
         $game = $serializer->deserialize($json, Game::class, 'json');
 
-        //Permet de récupérer le contenu sous forme de tableau afin d'extraire l'id de l'arena et du type pour les setter après.
-        //impossible sans, juste avec le serializer on récupère qu'une entité vide à chaque fois pour Arena et Type dans l'objet game.
+        //TODO: why Arena and Type are empty ? Check how to improve loading of arena and type entities (without arenaId and typeId)
+        // Retrieve the content as an array to extract the arena and type id for setter after.
+        // Transform object into array
         $content = $request->toArray();
-        $arenaId = $content['arenaId'] ?? -1;
-        $typeId = $content['typeId'] ?? -1;
 
+        $arenaId = $content['arenaId'] ?? -1;
         $game->setArena($arenaRepository->find($arenaId));
+        
+        $typeId = $content['typeId'] ?? -1;
         $game->setType($typeRepository->find($typeId));
 
         // à décommenté dès qu'on auras mis des @asserts dans les entity pour contraindre les champs de validation
@@ -132,10 +121,7 @@ class GameController extends AbstractController
         $manager->flush();
 
         return $this->json($game, Response::HTTP_CREATED, [], [
-            'groups' => 'games_get_item'
+            'groups' => 'game_item'
         ]);
-        
     }
-
-
 }

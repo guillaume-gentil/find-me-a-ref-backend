@@ -18,11 +18,11 @@ class Type
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
+     * "games_collection",
+     * "game_item",
      * "types_collection",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -31,11 +31,11 @@ class Type
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({
-     * "games_get_collection",
-     * "games_get_item",
+     * "games_collection",
+     * "game_item",
      * "types_collection",
-     * "types_get_item",
-     * "categories_get_item",
+     * "games_by_type",
+     * "games_by_category",
      * "games_by_arena"
      * })
      */
@@ -53,7 +53,7 @@ class Type
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="type")
-     * @Groups({"types_get_item"})
+     * @Groups({"games_by_type"})
      */
     private $games;
 

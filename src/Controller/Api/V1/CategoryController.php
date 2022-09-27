@@ -22,22 +22,22 @@ class CategoryController extends AbstractController
         $categories = $categoryRepository->findAll();
 
         return $this->json(['categories' => $categories], Response::HTTP_OK, [], [
-            'groups' => 'games_get_collection'
+            'groups' => 'games_collection'
         ]);
     }
 
     /**
-     * Get category by Id
-     * @Route("/categories/{id}", name="categories_by_id", methods={"GET"}, requirements={"id"="\d+"})
+     * Get games by category id
+     * @Route("/categories/{id}/games", name="games_by_category", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function getCategoryItem(Category $category = null): JsonResponse
+    public function getGamesByCategory(Category $category = null): JsonResponse
     {
         if(is_null($category)) {
-            return $this->json(['error' => 'Category not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($category, Response::HTTP_OK, [], [
-            'groups' => 'categories_get_item'
+            'groups' => 'games_by_category'
         ]); 
     }
 }

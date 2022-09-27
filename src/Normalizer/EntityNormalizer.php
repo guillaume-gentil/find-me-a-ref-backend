@@ -6,6 +6,9 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * Entity normalizer
+ * 
+ * ! this snippet is copy from : https://gist.github.com/benlac/c9efc733ee16ebd0d438119bcccb92b9
+ * ? doc symfony : https://symfony.com/doc/current/serializer/custom_normalizer.html
  */
 class EntityNormalizer implements DenormalizerInterface
 {

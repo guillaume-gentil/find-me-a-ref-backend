@@ -22,7 +22,7 @@ class ArenaController extends AbstractController
         $arenas = $arenaRepository->findAll();
 
         return $this->json(['arenas' => $arenas], Response::HTTP_OK, [], [
-            'groups' => 'games_get_collection'
+            'groups' => 'games_collection'
         ]);
     }
 
@@ -33,7 +33,7 @@ class ArenaController extends AbstractController
     public function getGamesByArena(Arena $arena = null)
     {
         if(is_null($arena)) {
-            return $this->json(['error' => 'Arena not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($arena, Response::HTTP_OK, [], [
