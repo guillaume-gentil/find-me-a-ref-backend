@@ -4,16 +4,17 @@ namespace App\Controller\Api\V1;
 
 use App\Entity\Game;
 use App\Entity\User;
-use App\Repository\ArenaRepository;
 use App\Repository\GameRepository;
 use App\Repository\TypeRepository;
+use App\Repository\UserRepository;
+use App\Repository\ArenaRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use ProxyManager\Factory\RemoteObject\Adapter\JsonRpc;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use ProxyManager\Factory\RemoteObject\Adapter\JsonRpc;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -129,48 +130,76 @@ class GameController extends AbstractController
 
     /**
      * Add user (referee) on a game
-     * @Route("/games/{id}", name="game_by_id", methods={"PATCH"}, requirements={"id"="\d+"})
+     * @Route("/games/{id}", name="add_user_on_game", methods={"PATCH"}, requirements={"id"="\d+"})
      */
-    public function addUserOnGame(Game $game = null, Request $request, SerializerInterface $serializer)
+    public function addUserOnGame(
+        Game $game = null, 
+        Request $request, 
+        SerializerInterface $serializer, 
+        ManagerRegistry $doctrine, 
+        GameRepository $gameRepository, 
+        UserRepository $userRepository, 
+        ValidatorInterface $validator
+        )
     {
-        // requête du front :
-        // {
-        //     "game_id": 25,
-        //     "user_id": 2
-        // }
-
-        //? filtre la table game selon game_id
-        //? compare user_id du front avec les user_id de la table
-
         
         //? même début de game/{id} => vérifier si  $game existe, sinon => 404
         // manage 404 error
-        //dd($game);
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-
         
-        //$json = $request->getContent();
-        //dd($json);
-        
-        //$game = $serializer->deserialize($json, Game::class, 'json');
-
+        // version https://openclassrooms.com/fr/courses/7709361-construisez-une-api-rest-avec-symfony/7795129-mettez-en-place-un-crud
+        // je transforme le contenu de la requete en tableau
         $content = $request->toArray();
-        $userId = $content['user'] ?? -1;
+
+        $userId = $content['user_id'];        
+
+        // récupère dans un array les arbitres (User) présents sur le match
+        $users_brut = $gameRepository->findAllRefByGame($game->getId());
+
+        // "met à plat" le tableau des arbitres
+        for ($i=0; $i < count($users_brut); $i++) { 
+            $users[] = $users_brut[$i]['id'];
+        }
+
+        // fait un toggle de l'engagement d'un arbitre : ajoute ou enlève un arbitre sur un match
+        if (in_array($userId, $users)) {
+            // dump("déjà engagé");  // removeUser
+            $game->removeUser($userRepository->find($userId));
+            dump("supprimé avec succès");
+        } else {
+            // dump ("engagement validé");  // addUser
+            $game->addUser($userRepository->find($userId));
+            dump("ajouté avec succès");
+        }
+
+        dump($game);
+
+        dd("stop!");
+
+        $errors = $validator->validate($game);
+        //dd($errors);
+        if (count($errors) > 0) {
+            $cleanErrors = [];
+            /**
+             * @var ConstraintViolation $error
+             */
+            foreach($errors as $error) {
+                $property = $error->getPropertyPath();
+                $message = $error->getMessage();
+                $cleanErrors[$property][] = $message;
+            }
+
+            return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+        }  
+
+        $manager = $doctrine->getManager();
+        $manager->flush();
         
-        $game->addUser(User $userId);
-
-        dd($game);
-        //? vérifier user id valide
-
-        //? si déjà 2 users retourner une erreur
-
-        //? si userid transmis = current userid => c'est un arbitre qui se désengage $game->removeUser
-
-        //? si userid différent de current userid et si count user < 2
-        //? si $game exite $game->addUser(user id transmis par le front)
-        return $this->json('Ça marche !', Response::HTTP_CREATED);
+        return $this->json($game, Response::HTTP_OK, [], [
+            'groups' => 'game_item'
+        ]);
 
     }
 }

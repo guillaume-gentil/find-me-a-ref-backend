@@ -59,6 +59,27 @@ class GameRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllRefByGame(int $game_id)
+    {
+        /* 
+            SELECT user_id
+            FROM game_user
+            WHERE game_id = 43
+        */
+
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            "SELECT u.id
+            FROM App\Entity\Game g
+            JOIN g.users u
+            WITH g.id = :id"
+        )->setParameter('id', $game_id);
+        
+        return $query->getResult();
+    }
+
+
 //    /**
 //     * @return Game[] Returns an array of Game objects
 //     */
