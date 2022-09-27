@@ -22,7 +22,8 @@ class Arena
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $id;
@@ -34,7 +35,8 @@ class Arena
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $name;
@@ -45,7 +47,8 @@ class Arena
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $address;
@@ -56,7 +59,8 @@ class Arena
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $zipCode;
@@ -83,6 +87,9 @@ class Arena
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="arena")
+     * @Groups({
+     * "games_by_arena"
+     * })
      */
     private $games;
 

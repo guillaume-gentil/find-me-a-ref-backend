@@ -22,7 +22,8 @@ class Type
      * "games_get_item",
      * "types_collection",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $id;
@@ -34,7 +35,8 @@ class Type
      * "games_get_item",
      * "types_collection",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $name;
