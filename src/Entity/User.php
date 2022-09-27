@@ -23,7 +23,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $id;
@@ -34,7 +35,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $firstname;
@@ -51,7 +53,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $email;
@@ -72,7 +75,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Groups({
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $licenceId;
@@ -83,7 +87,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $level;

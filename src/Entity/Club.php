@@ -20,7 +20,8 @@ class Club
      * @Groups({
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $id;
@@ -31,7 +32,8 @@ class Club
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $name;

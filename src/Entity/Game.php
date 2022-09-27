@@ -21,8 +21,8 @@ class Game
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
-     * })
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $id;
@@ -33,8 +33,8 @@ class Game
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
-     * })
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $date;
@@ -56,8 +56,7 @@ class Game
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
-     * })
+     * "categories_get_item",
      * })
      */
     private $arena;
@@ -68,7 +67,8 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $type;
@@ -78,7 +78,8 @@ class Game
      * @Groups({
      * "games_get_collection",
      * "games_get_item",
-     * "types_get_item"
+     * "types_get_item",
+     * "games_by_arena"
      * })
      */
     private $teams;
@@ -89,7 +90,8 @@ class Game
      * "games_get_collection",
      * "games_get_item",
      * "types_get_item",
-     * "categories_get_item"
+     * "categories_get_item",
+     * "games_by_arena"
      * })
      */
     private $users;
