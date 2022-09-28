@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GameRepository::class)
@@ -29,6 +30,7 @@ class Game
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank
      * @Groups({
      * "games_collection",
      * "game_item",
@@ -41,6 +43,7 @@ class Game
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Assert\NotBlank
      */
     private $createdAt;
 
@@ -50,8 +53,9 @@ class Game
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Arena::class, inversedBy="games", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Arena::class, inversedBy="games")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull(message="the ID of arena is not correct.")
      * @Groups({
      * "games_collection",
      * "game_item",
@@ -62,8 +66,9 @@ class Game
     private $arena;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="games", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="games")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull(message="the ID of type is not correct.")
      * @Groups({
      * "games_collection",
      * "game_item",
