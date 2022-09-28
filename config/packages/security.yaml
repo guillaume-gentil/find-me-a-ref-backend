@@ -41,9 +41,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/v1/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1, roles: ROLE_REFEREE }
         # - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/v1/games, roles: ROLE_REFEREE, methods:[POST] }
+        - { path: ^/api/v1/games/\d+, roles: ROLE_REFEREE, methods:[GET, PATCH] }
+        - { path: ^/api/v1, roles: PUBLIC_ACCESS }
 
 when@test:
     security:
