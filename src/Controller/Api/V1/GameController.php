@@ -178,6 +178,8 @@ class GameController extends AbstractController
             }
         }
 
+        $game->setUpdatedAt(new \DateTimeImmutable('now'));
+
         $manager = $doctrine->getManager();
         $manager->flush();
         
