@@ -131,6 +131,7 @@ class AppFixtures extends Fixture
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
             $user->setEmail($faker->email());
+            $user->setPhoneNumber($faker->mobileNumber());
             $user->setRoles(['ROLE_REFEREE']);
             //DEV: password for developpement : 'mdpfix'
             $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
