@@ -26,17 +26,20 @@ class AppFixtures extends Fixture
 
         // Empty array for save club's name and don't have two clubs with the same name.
         $clubs = [];
-
+        $clubs_address = [];
         $clubs_names = [];
         for ($i = 1; $i <= 10; $i++) {
             $club = new Club();
             $clubName = $findMeARefProvider->getClubName();
-            while(in_array($clubName, $clubs_names)) {
+            $clubAddress = $findMeARefProvider->getAddress();
+            while(in_array($clubName, $clubs_names) && in_array($clubAddress, $clubs_address)) {
                 $clubName = $findMeARefProvider->getClubName();
+                $clubAddress = $findMeARefProvider->getAddress();
             }
 
             $club->setName($clubName);
-            $club->setAddress($faker->address());
+            $club->setAddress($clubAddress);
+                       
             $club->setZipCode($faker->randomNumber(5, true));
             $club->setCreatedAt(new \DateTimeImmutable("now"));
 
@@ -100,11 +103,16 @@ class AppFixtures extends Fixture
         //Arena fixtures
 
         $arenas = [];
-        for ($i = 1; $i <= 15; $i++) {
+        $arenas_address = [];
+        for ($i = 1; $i <= 10; $i++) {
             $arena = new Arena();
+            $arenaAddress = $findMeARefProvider->getAddress();
+            while(in_array($arenaAddress, $arenas_address)) {
+                $arenaAddress = $findMeARefProvider->getAddress();
+            }
 
             $arena->setName($faker->company());
-            $arena->setAddress($faker->address());
+            $arena->setAddress($arenaAddress);
             $arena->setZipCode($faker->randomNumber(5, true));
             $arena->setCreatedAt(new \DateTimeImmutable("now"));
 
@@ -130,7 +138,7 @@ class AppFixtures extends Fixture
 
             $refereeLevel = $findMeARefProvider->getRefereeLevel();
             $user->setLevel($refereeLevel);
-            $user->setAddress($faker->address());
+            $user->setAddress($findMeARefProvider->getAddress());
             $user->setZipCode($faker->randomNumber(5, true));
             $user->setCreatedAt(new \DateTimeImmutable("now"));
 
@@ -147,7 +155,7 @@ class AppFixtures extends Fixture
 
             $game->setDate($faker->dateTimeBetween('+1 week' , '+5 week'));
             $game->setCreatedAt(new \DateTimeImmutable("now"));
-            $game->setArena($arenas[mt_rand(0,14)]);
+            $game->setArena($arenas[mt_rand(0,9)]);
             $game->setType($types[mt_rand(0,5)]);
             //add two teams with two differents parts of teams array for not duplicates same team.
             $game->addTeam($teams[mt_rand(0,6)]);
