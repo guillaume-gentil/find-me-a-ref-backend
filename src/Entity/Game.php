@@ -23,7 +23,8 @@ class Game
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $id;
@@ -36,7 +37,8 @@ class Game
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $date;
@@ -73,7 +75,8 @@ class Game
      * "games_collection",
      * "game_item",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $type;
@@ -96,7 +99,8 @@ class Game
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $users;

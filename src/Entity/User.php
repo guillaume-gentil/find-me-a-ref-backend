@@ -24,7 +24,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $id;
@@ -36,7 +37,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $firstname;
@@ -54,7 +56,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $email;
@@ -76,7 +79,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $licenceId;
@@ -88,7 +92,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $level;

@@ -22,7 +22,8 @@ class Team
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $id;
@@ -34,7 +35,8 @@ class Team
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $name;
@@ -47,7 +49,8 @@ class Team
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $club;
@@ -58,7 +61,8 @@ class Team
      * @Groups({
      * "games_collection",
      * "game_item",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $category;
@@ -76,7 +80,8 @@ class Team
     /**
      * @ORM\ManyToMany(targetEntity=Game::class, mappedBy="teams")
      * @Groups({
-     * "games_by_category"
+     * "games_by_category",
+     * "games_by_team"
      * })
      */
     private $games;

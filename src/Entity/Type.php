@@ -23,7 +23,8 @@ class Type
      * "types_collection",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $id;
@@ -36,7 +37,8 @@ class Type
      * "types_collection",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_team"
      * })
      */
     private $name;
