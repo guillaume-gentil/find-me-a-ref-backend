@@ -133,6 +133,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $games;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $phoneNumber;
+
     public function __construct()
     {
         $this->games = new ArrayCollection();
@@ -370,6 +375,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->games->removeElement($game)) {
             $game->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
