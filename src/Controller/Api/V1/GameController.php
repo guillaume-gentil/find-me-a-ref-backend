@@ -23,7 +23,7 @@ class GameController extends AbstractController
 {
     /**
      * Get game's list
-     * @Route("/games/findall", name="games_collection", methods={"GET"})
+     * @Route("/games", name="games_collection", methods={"GET"})
      */
     public function getGamesCollection(GameRepository $gameRepository): JsonResponse
     {
@@ -37,7 +37,7 @@ class GameController extends AbstractController
 
     /**
      * List of games order by date
-     * @Route("/games", name="games_by_dates", methods={"GET"})
+     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
      */
     public function getGamesByDates(GameRepository $gameRepository): JsonResponse
     {
@@ -153,9 +153,10 @@ class GameController extends AbstractController
         $content = $request->toArray();
 
         $userEmail = $content['user_email'];        
-        dd($userEmail);
+        dump($userEmail);
         // récupère dans un array les arbitres (User) présents sur le match
         $users_brut = $gameRepository->findAllRefByGame($game->getId());
+        dd($users_brut);
         $users = [];
 
         // "met à plat" le tableau des arbitres
