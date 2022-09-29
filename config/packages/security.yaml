@@ -46,6 +46,7 @@ security:
         - { path: ^/api/v1/games/\d+, roles: ROLE_REFEREE, methods:[GET, PATCH] }
         - { path: ^/api/v1, roles: PUBLIC_ACCESS }
 
+
 when@test:
     security:
         password_hashers:
