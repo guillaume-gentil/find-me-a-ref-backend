@@ -45,6 +45,7 @@ security:
         - { path: ^/api/v1/games, roles: ROLE_REFEREE, methods:[POST] }
         - { path: ^/api/v1/games/\d+, roles: ROLE_REFEREE, methods:[GET, PATCH] }
         - { path: ^/api/v1, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/games-by-dates, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

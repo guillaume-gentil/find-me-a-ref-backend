@@ -152,8 +152,8 @@ class GameController extends AbstractController
         // je transforme le contenu de la requete en tableau
         $content = $request->toArray();
 
-        $userId = $content['user_id'];        
-
+        $userEmail = $content['user_email'];        
+        dd($userEmail);
         // récupère dans un array les arbitres (User) présents sur le match
         $users_brut = $gameRepository->findAllRefByGame($game->getId());
         $users = [];
