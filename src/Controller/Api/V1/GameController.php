@@ -3,6 +3,7 @@
 namespace App\Controller\Api\V1;
 
 use App\Entity\Game;
+use App\Entity\User;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -138,55 +139,67 @@ class GameController extends AbstractController
     public function addUserOnGame(
         Game $game = null, 
         Request $request, 
-        ManagerRegistry $doctrine, 
-        GameRepository $gameRepository, 
+        ManagerRegistry $doctrine,
+        GameRepository $gameRepository,
         UserRepository $userRepository
         )
     {
-        // TODO traduire les commentaires en anglais
         // manage 404 error
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
         
-        // je transforme le contenu de la requete en tableau
+        // decode the request content (JSON -> array)
         $content = $request->toArray();
+        $userEmailFromJSON = $content['user_email'];   
 
-        $userEmail = $content['user_email'];        
-        dump($userEmail);
-        // récupère dans un array les arbitres (User) présents sur le match
-        $users_brut = $gameRepository->findAllRefByGame($game->getId());
-        dd($users_brut);
-        $users = [];
+        // find user by email receive by json file 
+        $userFromJSON = $userRepository->findOneBy(array('email' => $userEmailFromJSON));
+        $userId = $userFromJSON->getId();
+  
+        // get user from JWT for check
+        $userFromJWT = $this->getUser();
+        $userEmailFromJWT = $userFromJWT->getUserIdentifier();
 
-        // "met à plat" le tableau des arbitres
-        for ($i=0; $i < count($users_brut); $i++) { 
-            $users[] = $users_brut[$i]['id'];
-        }
+        
+        if($userEmailFromJSON === $userEmailFromJWT) {
 
-        // fait un toggle de l'engagement d'un arbitre : ajoute ou enlève un arbitre sur un match
-        if (count($users) >= 2) {
-            if (in_array($userId, $users)) {
-                $game->removeUser($userRepository->find($userId));
-            } else {
-                return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
+            // get all the Game's Users with too many dimensions
+            $users_brut = $gameRepository->findAllRefByGame($game->getId());
+            
+            // remove one level from the Game's Users array
+            $users = [];
+            for ($i=0; $i < count($users_brut); $i++) { 
+                $users[] = $users_brut[$i]['id'];
             }
-        } elseif (count($users) < 2) {
-            if (in_array($userId, $users)) {
-                $game->removeUser($userRepository->find($userId));
-            } else {
-                $game->addUser($userRepository->find($userId));
+    
+            // toggle the engagement of a referee
+            // Max users in each game = 2
+            if (count($users) >= 2) {
+                if (in_array($userId, $users)) {
+                    $game->removeUser($userRepository->find($userId));
+                } else {
+                    return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+            } elseif (count($users) < 2) {
+                if (in_array($userId, $users)) {
+                    $game->removeUser($userRepository->find($userId));
+                } else {
+                    $game->addUser($userRepository->find($userId));
+                }
             }
+            // TODO: make this action with a service
+            $game->setUpdatedAt(new \DateTimeImmutable('now'));
+    
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        } else {
+            // this error occur when a hacker try to send a different email between JSON request and JWT
+            return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
         }
-
-        $game->setUpdatedAt(new \DateTimeImmutable('now'));
-
-        $manager = $doctrine->getManager();
-        $manager->flush();
         
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);
-
     }
 }
