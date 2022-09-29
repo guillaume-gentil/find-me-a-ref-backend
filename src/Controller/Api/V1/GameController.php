@@ -23,7 +23,7 @@ class GameController extends AbstractController
 {
     /**
      * Get game's list
-     * @Route("/games", name="games_collection", methods={"GET"})
+     * @Route("/games/findall", name="games_collection", methods={"GET"})
      */
     public function getGamesCollection(GameRepository $gameRepository): JsonResponse
     {
@@ -37,7 +37,7 @@ class GameController extends AbstractController
 
     /**
      * List of games order by date
-     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
+     * @Route("/games", name="games_by_dates", methods={"GET"})
      */
     public function getGamesByDates(GameRepository $gameRepository): JsonResponse
     {
