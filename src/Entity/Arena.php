@@ -67,11 +67,25 @@ class Arena
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
+     * "games_by_arena"
+     * })
      */
     private $longitude;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
+     * "games_by_arena"
+     * })
      */
     private $latitude;
 

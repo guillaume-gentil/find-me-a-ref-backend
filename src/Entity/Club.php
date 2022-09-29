@@ -52,11 +52,25 @@ class Club
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
+     * "games_by_arena",
+     * "games_by_team"
+     * })
      */
     private $longitude;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
+     * "games_by_arena",
+     * "games_by_team"
+     * })
      */
     private $latitude;
 
