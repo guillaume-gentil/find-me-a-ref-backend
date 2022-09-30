@@ -39,10 +39,10 @@ class AppFixtures extends Fixture
             
             $club->setName($clubName);
             $club->setAddress($clubAddress);
-            $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
-            $result = $geocoder->geocode($club->getAddress());
-            $club->setLatitude($result['results'][0]['geometry']['lat']);
-            $club->setLongitude($result['results'][0]['geometry']['lng']);
+
+            $geocode = explode("#", $findMeARefProvider->getGeocode());
+            $club->setLongitude($geocode[0]);
+            $club->setLatitude($geocode[1]);
                        
             $club->setZipCode($faker->randomNumber(5, true));
             $club->setCreatedAt(new \DateTimeImmutable("now"));
@@ -118,10 +118,11 @@ class AppFixtures extends Fixture
             
             $arena->setName($faker->company());
             $arena->setAddress($arenaAddress);
-            $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
-            $result = $geocoder->geocode($arena->getAddress());
-            $arena->setLatitude($result['results'][0]['geometry']['lat']);
-            $arena->setLongitude($result['results'][0]['geometry']['lng']);
+
+            $geocode = explode("#", $findMeARefProvider->getGeocode());
+            $arena->setLongitude($geocode[0]);
+            $arena->setLatitude($geocode[1]);
+
             $arena->setZipCode($faker->randomNumber(5, true));
             $arena->setCreatedAt(new \DateTimeImmutable("now"));
 
@@ -149,10 +150,11 @@ class AppFixtures extends Fixture
             $refereeLevel = $findMeARefProvider->getRefereeLevel();
             $user->setLevel($refereeLevel);
             $user->setAddress($findMeARefProvider->getAddress());
-            $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
-            $result = $geocoder->geocode($user->getAddress());
-            $user->setLatitude($result['results'][0]['geometry']['lat']);
-            $user->setLongitude($result['results'][0]['geometry']['lng']);
+
+            $geocode = explode("#", $findMeARefProvider->getGeocode());
+            $user->setLongitude($geocode[0]);
+            $user->setLatitude($geocode[1]);
+
             $user->setZipCode($faker->randomNumber(5, true));
             $user->setCreatedAt(new \DateTimeImmutable("now"));
 

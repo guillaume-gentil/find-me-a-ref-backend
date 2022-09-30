@@ -32,6 +32,22 @@ class findMeARefProvider
         "13 Av. Joseph Fallen, 13400 Aubagne",
     ];
 
+    private $geocode = [
+        # longitude#latitude
+        "6.0926087#45.8822264",  # annecy
+        "-1.65071179#48.1325361", #Rennes
+        "7.6991209#48.5866336",  #Strasbourg
+        "4.9#44.9333",  #Valence
+        "-0.5983295#44.8310771",  #Bordeaux
+        "2.3744378#48.8356758",  #  Paris
+        "0.176271#45.6418096",  # Angoulême
+        "5.5650095#43.2938845",  # Aubagne
+        "6.4662469#46.361827",  # THONON-LES-BAINS
+        "3.0571769#50.61448",  # Lille
+        "5.6845032#45.0892147"  #VARCES
+    ];
+
+    
     private $type = [
         "match amical",
         "match de poule",
@@ -100,5 +116,14 @@ class findMeARefProvider
     public function getRefereeLevel()
     {
         return $this->refereeLevel[array_rand($this->refereeLevel)];
+    }
+
+    /**
+     * return random longitude and latitude
+     *
+     */
+    public function getGeocode()
+    {
+        return $this->geocode[array_rand($this->geocode)];
     }
 }
