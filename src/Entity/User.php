@@ -158,6 +158,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({
+     * "games_collection",
+     * "game_item",
+     * "games_by_type",
+     * "games_by_category",
+     * "games_by_arena",
+     * "games_by_team",
+     * "games_by_club"
+     * })
      */
     private $phoneNumber;
 
