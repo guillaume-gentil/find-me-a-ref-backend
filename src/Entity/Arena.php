@@ -23,7 +23,8 @@ class Arena
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_club"
      * })
      */
     private $id;
@@ -36,7 +37,8 @@ class Arena
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_club"
      * })
      */
     private $name;
@@ -48,7 +50,8 @@ class Arena
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_club"
      * })
      */
     private $address;
@@ -60,7 +63,8 @@ class Arena
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_club"
      * })
      */
     private $zipCode;
@@ -72,7 +76,8 @@ class Arena
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_club"
      * })
      */
     private $longitude;
@@ -84,7 +89,8 @@ class Arena
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_arena"
+     * "games_by_arena",
+     * "games_by_club"
      * })
      */
     private $latitude;

@@ -23,7 +23,8 @@ class Club
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $id;
@@ -36,7 +37,8 @@ class Club
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $name;
@@ -49,7 +51,8 @@ class Club
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $address;
@@ -67,7 +70,8 @@ class Club
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $longitude;
@@ -80,7 +84,8 @@ class Club
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $latitude;
@@ -97,6 +102,7 @@ class Club
 
     /**
      * @ORM\OneToMany(targetEntity=Team::class, mappedBy="club", orphanRemoval=true)
+     * @Groups({"games_by_club"})
      */
     private $teams;
 

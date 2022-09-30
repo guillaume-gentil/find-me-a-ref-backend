@@ -22,7 +22,7 @@ class TypeController extends AbstractController
         $types = $typeRepository->findAll();
 
         return $this->json(['types' => $types], Response::HTTP_OK, [], [
-            'groups' => 'types_collection'
+            'groups' => 'games_collection'
         ]);
     }
 

@@ -25,7 +25,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $id;
@@ -38,7 +39,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $firstname;
@@ -57,7 +59,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $email;
@@ -80,7 +83,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $licenceId;
@@ -93,7 +97,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $level;
@@ -116,7 +121,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $longitude;
@@ -129,7 +135,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $latitude;

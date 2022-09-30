@@ -24,7 +24,8 @@ class Game
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $id;
@@ -38,7 +39,8 @@ class Game
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $date;
@@ -63,6 +65,7 @@ class Game
      * "game_item",
      * "games_by_type",
      * "games_by_category",
+     * "games_by_club"
      * })
      */
     private $arena;
@@ -76,7 +79,8 @@ class Game
      * "game_item",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $type;
@@ -100,7 +104,8 @@ class Game
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
-     * "games_by_team"
+     * "games_by_team",
+     * "games_by_club"
      * })
      */
     private $users;

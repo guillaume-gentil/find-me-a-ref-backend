@@ -20,7 +20,6 @@ class Type
      * @Groups({
      * "games_collection",
      * "game_item",
-     * "types_collection",
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
@@ -34,7 +33,6 @@ class Type
      * @Groups({
      * "games_collection",
      * "game_item",
-     * "types_collection",
      * "games_by_type",
      * "games_by_category",
      * "games_by_arena",
