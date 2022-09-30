@@ -89,7 +89,7 @@ class GameController extends AbstractController
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
         ValidatorInterface $validator
-        )
+        ): JsonResponse
     {
         $json = $request->getContent();
 
@@ -142,7 +142,7 @@ class GameController extends AbstractController
         ManagerRegistry $doctrine,
         GameRepository $gameRepository,
         UserRepository $userRepository
-        )
+        ): JsonResponse
     {
         // manage 404 error
         if(is_null($game)) {
@@ -213,7 +213,7 @@ class GameController extends AbstractController
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
         ValidatorInterface $validator
-        )
+        ): JsonResponse
     {
         // manage 404 error
         if(is_null($game)) {
@@ -260,4 +260,22 @@ class GameController extends AbstractController
             'groups' => 'game_item'
         ]);
     }
+
+    /**
+     * Delete a game
+     * @Route("/games/{id}", name="games_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     */
+    public function delete(Game $game = null, GameRepository $gameRepository)
+    {
+        // manage 404 error
+        if(is_null($game)) {
+            return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+        //TODO add control for secure delete method
+        $gameRepository->remove($game, true);
+     
+        return $this->json(null, Response::HTTP_NO_CONTENT); 
+    }
+
+
 }

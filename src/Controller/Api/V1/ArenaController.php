@@ -34,7 +34,7 @@ class ArenaController extends AbstractController
      * Get arena by Id
      * @Route("/arenas/{id}/games", name="games_by_arena", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function getGamesByArena(Arena $arena = null)
+    public function getGamesByArena(Arena $arena = null): JsonResponse
     {
         if(is_null($arena)) {
             return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
@@ -54,7 +54,7 @@ class ArenaController extends AbstractController
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
         ValidatorInterface $validator
-    )
+    ): JsonResponse
     {
         $json = $request->getContent();
 
