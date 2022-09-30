@@ -122,7 +122,7 @@ class GameController extends AbstractController
             }
             return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
         }
-
+        $game->setCreatedAt(new \DateTimeImmutable('now'));
         $manager = $doctrine->getManager();
         $manager->persist($game);
         $manager->flush();
