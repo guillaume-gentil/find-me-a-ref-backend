@@ -271,10 +271,17 @@ class GameController extends AbstractController
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-        //TODO add control for secure delete method
-        $gameRepository->remove($game, true);
-     
-        return $this->json(null, Response::HTTP_NO_CONTENT); 
+
+        // TODO add role admin
+        $user = $this->getUser();
+        $userRole = $user->getRoles();
+        if (in_array("ROLE_ADMIN", $userRole)) {
+
+            $gameRepository->remove($game, true);
+            return $this->json(null, Response::HTTP_NO_CONTENT); 
+        } else {
+            return $this->json(['you don\'t have the rights to do this action'], Response::HTTP_FORBIDDEN);
+        }
     }
 
 
