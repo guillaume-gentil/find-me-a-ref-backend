@@ -202,4 +202,62 @@ class GameController extends AbstractController
             'groups' => 'game_item'
         ]);
     }
+
+    /**
+     * Edit a game
+     * @Route("/games/{id}/edit", name="games_edit", methods={"PUT"}, requirements={"id"="\d+"})
+     */
+    public function edit(
+        Game $game = null,
+        Request $request,
+        SerializerInterface $serializer,
+        ManagerRegistry $doctrine,
+        ValidatorInterface $validator
+        )
+    {
+        // manage 404 error
+        if(is_null($game)) {
+            return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $json = $request->getContent();
+
+        // Be careful to receive all the fields of the entity in the JSON file
+        /* 
+            {
+                "date":"2022-12-11 10:30:00",
+                "teams":[260,263],
+                "users":[],
+                "arena":176,
+                "type":152
+            }
+        */
+
+        $game = $serializer->deserialize($json, Game::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $game]);
+        //dd($game);
+
+        $errors = $validator->validate($game);
+
+        if (count($errors) > 0) {
+            $cleanErrors = [];
+            /**
+             * @var ConstraintViolation $error
+             */
+            foreach($errors as $error) {
+                $property = $error->getPropertyPath();
+                $message = $error->getMessage();
+                $cleanErrors[$property][] = $message;
+            }
+            return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+
+        }
+        $game->setUpdatedAt(new \DateTimeImmutable('now'));
+
+        $manager = $doctrine->getManager();
+        $manager->flush();
+
+        return $this->json($game, Response::HTTP_OK, [], [
+            'groups' => 'game_item'
+        ]);
+    }
 }
