@@ -67,10 +67,11 @@ class ArenaController extends AbstractController
                 "createdAt": "2022-09-26 19:14:20"
             }
         */
-        // TODO create event for automatically add createdAt field.
 
+        // TODO create SERVICE/event for automatically add createdAt field.
         $arena = $serializer->deserialize($json, Arena::class, 'json');
 
+        // TODO create SERVICE/event for automatically add geocoding field (from opencage API).
         $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
         $result = $geocoder->geocode($arena->getAddress());
 
