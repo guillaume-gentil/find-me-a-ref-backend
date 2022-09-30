@@ -26,7 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $id;
@@ -40,14 +41,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"game_item"})
+     * @Groups({"game_item", "users_collection"})
      */
     private $lastname;
 
@@ -60,13 +62,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"users_collection"})
      */
     private $roles = [];
 
@@ -84,7 +88,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $licenceId;
@@ -98,13 +103,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $level;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"users_collection"})
      */
     private $address;
 
@@ -165,7 +172,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $phoneNumber;
