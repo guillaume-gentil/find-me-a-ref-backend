@@ -9,12 +9,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const ROLES = ["ROLE_ADMIN", "ROLE_TEAMHEAD", "ROLE_REFEREE"];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -26,13 +29,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      * @Groups({
      * "games_collection",
      * "game_item",
@@ -40,19 +45,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"game_item"})
+     * @Assert\NotBlank
+     * @Groups({"game_item", "users_collection"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank
+     * @Assert\Email
      * @groups({
      * "games_collection",
      * "game_item",
@@ -60,13 +69,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Assert\Choice(choices=User::ROLES, multiple=true)
+     * @Groups({"users_collection"})
      */
     private $roles = [];
 
@@ -84,7 +96,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $licenceId;
@@ -98,13 +111,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $level;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"users_collection"})
      */
     private $address;
 
@@ -165,7 +180,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * "games_by_category",
      * "games_by_arena",
      * "games_by_team",
-     * "games_by_club"
+     * "games_by_club",
+     * "users_collection"
      * })
      */
     private $phoneNumber;
