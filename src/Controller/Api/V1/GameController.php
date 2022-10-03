@@ -198,6 +198,9 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
         }
         
+        // refresh game's user collection
+        $game = $gameRepository->findById($game->getId());
+
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);
