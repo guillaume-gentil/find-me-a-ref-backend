@@ -21,9 +21,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/users", name="users", methods={"GET"})
+     * Get a users list
+     * @Route("/users", name="users_collection", methods={"GET"})
      */
-    public function getUsers(UserRepository $userRepository): JsonResponse
+    public function getUsersCollection(UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findAll();
 
@@ -36,7 +37,7 @@ class UserController extends AbstractController
      * Get user by Id
      * @Route("/users/{id}", name="user_by_id", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function getUser(User $user = null): JsonResponse
+    public function getUserById(User $user = null): JsonResponse
     {
         if(is_null($user)) {
             return $this->json(['error' => 'User\'s ID not found !'], Response::HTTP_NOT_FOUND);
@@ -48,13 +49,13 @@ class UserController extends AbstractController
     }
 
     /**
-     * Create new user
-     * @Route("/users/new", name="users_new", methods={"POST"})
+     * Add new user
+     * @Route("/users", name="users_add", methods={"POST"})
      */
-    public function new(
+    public function addUser(
         Request $request,
         SerializerInterface $serializer,
-        ManagerRegistry $doctrine,
+        UserRepository $userRepository,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher
         ): JsonResponse
@@ -81,9 +82,7 @@ class UserController extends AbstractController
         }
         
         //dd($user);
-        $manager = $doctrine->getManager();
-        $manager->persist($user);
-        $manager->flush();
+        $userRepository->add($user, true);
 
         return $this->json($user, Response::HTTP_OK, [], [
             'groups' => 'users_collection'
