@@ -65,7 +65,8 @@ class Game
      * "game_item",
      * "games_by_type",
      * "games_by_category",
-     * "games_by_club"
+     * "games_by_club",
+     * "games_by_team"
      * })
      */
     private $arena;
