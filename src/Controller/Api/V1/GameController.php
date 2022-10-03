@@ -3,6 +3,8 @@
 namespace App\Controller\Api\V1;
 
 use App\Entity\Game;
+use App\Entity\Team;
+use App\Entity\Type;
 use App\Entity\User;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
@@ -75,8 +77,48 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['game' => $game] OR $game ?
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'game_item'
+        ]);
+    }
+
+    /**
+     * Get games by typeId
+     * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByType(Type $type = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($type)) {
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByType($type->getId());
+
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['games' => $games] OR $games ?
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+
+    /**
+     * Get games by typeId
+     * @Route ("/teams/{id}/games", name="games_by_team", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByTeam(Team $team = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($team)) {
+            return $this->json(['error' => 'Team\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByTeam($team->getId());
+
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['games' => $games] OR $games ?
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
         ]);
     }
 

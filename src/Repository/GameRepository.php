@@ -99,29 +99,26 @@ class GameRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findGamesByTeam(int $teamId)
+    {
+        /*
+            SELECT *
+            FROM game
+            JOIN game_team ON game_id = game.id
+            JOIN team ON team_id = team.id
+            WHERE team.id = 76
+        */
 
-//    /**
-//     * @return Game[] Returns an array of Game objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('g.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+        $em = $this->getEntityManager();
 
-//    public function findOneBySomeField($value): ?Game
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $query = $em->createQuery(
+            "SELECT g
+            FROM App\Entity\Game g
+            JOIN g.teams t
+            WITH t.id = :id"
+        )->setParameter('id', $teamId);
+        
+        return $query->getResult();
+    }
+
 }

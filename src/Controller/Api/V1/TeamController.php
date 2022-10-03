@@ -25,19 +25,5 @@ class TeamController extends AbstractController
             'groups' => 'games_collection'
         ]);
     }
-
-    /**
-     * Get team by Id
-     * @Route ("/teams/{id}/games", name="games_by_team", methods={"GET"}, requirements={"id"="\d+"})
-     */
-    public function getGamesByTeam(Team $team = null): JsonResponse
-    {
-        if(is_null($team)) {
-            return $this->json(['error' => 'Team\'s ID not found !'], Response::HTTP_NOT_FOUND);
-        }
-
-        return $this->json($team, Response::HTTP_OK, [], [
-            'groups' => 'games_by_team'
-        ]);
-    }
+    
 }
