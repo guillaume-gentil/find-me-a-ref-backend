@@ -2,11 +2,12 @@
 
 namespace App\Controller\Api\V1;
 
-use App\Entity\Arena;
+use App\Entity\Club;
 use App\Entity\Game;
 use App\Entity\Team;
 use App\Entity\Type;
 use App\Entity\User;
+use App\Entity\Arena;
 use App\Entity\Category;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
@@ -162,6 +163,24 @@ class GameController extends AbstractController
         ]); 
     }
     
+    /**
+     * Get games by Club
+     * @Route("/club/{id}/games", name="games_by_club", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByClub(Club $club = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($club)) {
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByClub($club->getId());
+
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['games' => $games] OR $games ?
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
 
     /**
      * Add new game
