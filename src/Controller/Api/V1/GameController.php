@@ -287,6 +287,7 @@ class GameController extends AbstractController
         
         if($userEmailFromJSON === $userEmailFromJWT) {
 
+            
             // get all the Game's Users with too many dimensions
             $users_brut = $gameRepository->findAllRefByGame($game->getId());
             
@@ -295,9 +296,19 @@ class GameController extends AbstractController
             for ($i=0; $i < count($users_brut); $i++) { 
                 $users[] = $users_brut[$i]['id'];
             }
-    
+            
             // toggle the engagement of a referee
             // Max users in each game = 2
+
+            // TODO : refaire cet algorythme
+            //* utiliser les objets et non les ID
+            //* si (utilisateur courant dans le game)
+                //* "l'arbitre se désengage"
+            //* sinon si (2 utilisateurs)
+                //* "impossible d'ajouter, match complet
+            //* sinon
+                //* "l'arbitre s'engage"
+                
             if (count($users) >= 2) {
                 if (in_array($userId, $users)) {
                     $game->removeUser($userRepository->find($userId));
@@ -314,6 +325,9 @@ class GameController extends AbstractController
             // TODO: make this action with a service
             $game->setUpdatedAt(new \DateTimeImmutable('now'));
     
+            // // refresh game's user collection
+            // $game = $gameRepository->findById($game->getId());
+
             $manager = $doctrine->getManager();
             $manager->flush();
         } else {
@@ -321,10 +335,11 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
         }
         
-        // refresh game's user collection
-        $game = $gameRepository->findById($game->getId());
+        
 
-        return $this->json($game, Response::HTTP_OK, [], [
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['game' => $game] OR $game ?
+        return $this->json(['game' => $game], Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);
     }
