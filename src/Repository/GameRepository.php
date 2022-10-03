@@ -41,42 +41,31 @@ class GameRepository extends ServiceEntityRepository
         }
     }
 
+    
+    #################################################################################################
+    ### Home view with emergency filter
+    #################################################################################################
+    
+    public function findGamesOrderByNumberOfUser()
+    {
+        return $this->createQueryBuilder('g')
+        ->leftJoin('g.users', 'users')
+        ->orderBy('COUNT(users)')
+        ->groupBy('g')
+        ->getQuery()
+        ->getResult();
+    }
+    
+    #################################################################################################
+    ### Home view with filters
+    #################################################################################################
+    
     public function findGamesOrderByDate()
     {
         return $this->createQueryBuilder('g')
             ->orderBy('g.date')
             ->getQuery()
             ->getResult();
-    }
-
-    public function findGamesOrderByNumberOfUser()
-    {
-        return $this->createQueryBuilder('g')
-            ->leftJoin('g.users', 'users')
-            ->orderBy('COUNT(users)')
-            ->groupBy('g')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findAllRefByGame(int $game_id)
-    {
-        /* 
-            SELECT user_id
-            FROM game_user
-            WHERE game_id = 43
-        */
-
-        $em = $this->getEntityManager();
-
-        $query = $em->createQuery(
-            "SELECT u.id
-            FROM App\Entity\Game g
-            JOIN g.users u
-            WITH g.id = :id"
-        )->setParameter('id', $game_id);
-        
-        return $query->getResult();
     }
 
     public function findGamesByType(int $typeId)
@@ -183,6 +172,30 @@ class GameRepository extends ServiceEntityRepository
             JOIN g.teams t
             WITH t.club = :id"
         )->setParameter('id', $clubId);
+        
+        return $query->getResult();
+    }
+
+    #################################################################################################
+    ### Referee Engagement/disengagement (detail view)
+    #################################################################################################
+
+    public function findAllRefByGame(int $game_id)
+    {
+        /* 
+            SELECT user_id
+            FROM game_user
+            WHERE game_id = 43
+        */
+
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            "SELECT u.id
+            FROM App\Entity\Game g
+            JOIN g.users u
+            WITH g.id = :id"
+        )->setParameter('id', $game_id);
         
         return $query->getResult();
     }

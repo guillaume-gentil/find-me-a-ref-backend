@@ -27,6 +27,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
  */
 class GameController extends AbstractController
 {
+    #################################################################################################
+    ### Home view standard (List)
+    #################################################################################################
+
     /**
      * Get game's list
      * @Route("/games", name="games_collection", methods={"GET"})
@@ -41,19 +45,9 @@ class GameController extends AbstractController
         ]);
     }
 
-    /**
-     * List of games order by date
-     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
-     */
-    public function getGamesByDates(GameRepository $gameRepository): JsonResponse
-    {
-        $games = $gameRepository->findGamesOrderByDate();
-
-        return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_collection'
-        ]);
-
-    }
+    #################################################################################################
+    ### Home view with emergency filter
+    #################################################################################################
 
     /**
      * Get games order by number of users (referee)
@@ -69,22 +63,22 @@ class GameController extends AbstractController
 
     }
 
-    /**
-     * Get one game by Id
-     * @Route("/games/{id}", name="game_by_id", methods={"GET"}, requirements={"id"="\d+"})
-     */
-    public function getGameById(Game $game = null): JsonResponse
-    {
-        // manage 404 error
-        if(is_null($game)) {
-            return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
-        }
+    #################################################################################################
+    ### Home view with filters
+    #################################################################################################
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['game' => $game] OR $game ?
-        return $this->json($game, Response::HTTP_OK, [], [
-            'groups' => 'game_item'
+    /**
+     * List of games order by date
+     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
+     */
+    public function getGamesByDates(GameRepository $gameRepository): JsonResponse
+    {
+        $games = $gameRepository->findGamesOrderByDate();
+
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
         ]);
+
     }
 
     /**
@@ -181,6 +175,33 @@ class GameController extends AbstractController
             'groups' => 'games_collection'
         ]); 
     }
+
+    #################################################################################################
+    ### Referee Engagement/disengagement (detail view)
+    #################################################################################################
+
+    /**
+     * Get one game by Id
+     * @Route("/games/{id}", name="game_by_id", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGameById(Game $game = null): JsonResponse
+    {
+        // manage 404 error
+        if(is_null($game)) {
+            return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['game' => $game] OR $game ?
+        return $this->json($game, Response::HTTP_OK, [], [
+            'groups' => 'game_item'
+        ]);
+    }
+
+    #################################################################################################
+    ### Managing's methods
+    #################################################################################################
+
 
     /**
      * Add new game
