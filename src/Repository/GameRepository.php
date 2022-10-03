@@ -121,4 +121,27 @@ class GameRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findGamesByCategory(int $categoryId)
+    {
+        /*
+            SELECT *
+            FROM game
+            JOIN game_team ON game_id = game.id
+            JOIN team ON team_id = team.id
+            JOIN category ON team.category_id = category.id
+            WHERE category.id = :id
+        */
+
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            "SELECT g
+            FROM App\Entity\Game g
+            JOIN g.teams t
+            WITH t.category = :id"
+        )->setParameter('id', $categoryId);
+        
+        return $query->getResult();
+    }
+
 }

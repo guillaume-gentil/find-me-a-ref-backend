@@ -18,3 +18,14 @@ JOIN game_team ON game_id = game.id
 JOIN team ON team_id = team.id
 WHERE team.id = :id
 ```
+
+## Find all games by category : `/api/v1/category/{id}/games`
+
+```sql
+SELECT *
+FROM game
+JOIN game_team ON game_id = game.id
+JOIN team ON team_id = team.id
+JOIN category ON team.category_id = category.id
+WHERE category.id = :id
+```
