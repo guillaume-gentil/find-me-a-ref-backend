@@ -79,6 +79,26 @@ class GameRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findGamesByType(int $typeId)
+    {
+        /*
+            SELECT *
+            FROM game
+            JOIN type ON type.id = game.type_id
+            WHERE type.id = 31
+        */
+
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            "SELECT g
+            FROM App\Entity\Game g
+            WHERE g.type = :id"
+        )->setParameter('id', $typeId);
+        
+        return $query->getResult();
+    }
+
 
 //    /**
 //     * @return Game[] Returns an array of Game objects
