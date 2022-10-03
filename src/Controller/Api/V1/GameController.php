@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api\V1;
 
+use App\Entity\Arena;
 use App\Entity\Game;
 use App\Entity\Team;
 use App\Entity\Type;
@@ -86,7 +87,7 @@ class GameController extends AbstractController
     }
 
     /**
-     * Get games by typeId
+     * Get games by Type
      * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByType(Type $type = null, GameRepository $gameRepository): JsonResponse
@@ -105,7 +106,26 @@ class GameController extends AbstractController
     }
 
     /**
-     * Get games by typeId
+     * Get games by Arena
+     * @Route("/arenas/{id}/games", name="games_by_arena", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByArena(Arena $arena = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($arena)) {
+            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByArena($arena->getId());
+
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['games' => $games] OR $games ?
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+
+    /**
+     * Get games by Team
      * @Route ("/teams/{id}/games", name="games_by_team", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByTeam(Team $team = null, GameRepository $gameRepository): JsonResponse
@@ -124,7 +144,7 @@ class GameController extends AbstractController
     }
 
     /**
-     * Get games by categoryId
+     * Get games by Category
      * @Route("/categories/{id}/games", name="games_by_category", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByCategory(Category $category = null, GameRepository $gameRepository): JsonResponse
