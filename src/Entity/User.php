@@ -24,6 +24,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
+     * "users_collection",
+     * "game_item"
      * })
      */
     private $id;
@@ -33,6 +35,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Groups({
      * "games_collection",
+     * "users_collection",
+     * "game_item"
      * })
      */
     private $firstname;
@@ -40,7 +44,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
-     * @Groups({"game_item", "users_collection"})
+     * @Groups({
+     * "games_collection",
+     * "users_collection",
+     * "game_item"
+     * })
      */
     private $lastname;
 
@@ -48,8 +56,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank
      * @Assert\Email
-     * @groups({
+     * @Groups({
      * "games_collection",
+     * "users_collection",
+     * "game_item"
      * })
      */
     private $email;
@@ -80,6 +90,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
      * "games_collection",
+     * "game_item",
      * })
      */
     private $level;
@@ -99,6 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
+     * "users_collection",
      * "game_item"
      * })
      */
@@ -108,6 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
+     * "users_collection",
      * "game_item"
      * })
      */
@@ -132,6 +145,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({
      * "games_collection",
+     * "users_collection",
+     * "game_item"
      * })
      */
     private $phoneNumber;
