@@ -8,13 +8,14 @@ FROM game
 ORDER BY game.date
 ```
 
-## Find all games ordered by number of users (=referee) : `findGamesOrderByNumberOfUser`
+## Find all games ordered by number of users (=referee) : `findGamesOrderByNumberOfUser` => *EMERGENCY* filter
 
 ```sql
-SELECT game_user.game_id, COUNT(game_user.user_id) as ref
-FROM game_user
-GROUP BY game_user.game_id
-ORDER BY ref 
+SELECT game.date, game.id, count(gu.user_id) as ref
+FROM game
+LEFT JOIN game_user as gu ON game.id = gu.game_id
+GROUP BY game.id
+ORDER BY ref, game.date
 ```
 
 ## Find all users (=referee) of the game `findAllRefByGame`

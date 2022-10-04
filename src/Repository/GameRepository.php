@@ -48,12 +48,26 @@ class GameRepository extends ServiceEntityRepository
     
     public function findGamesOrderByNumberOfUser()
     {
-        return $this->createQueryBuilder('g')
-        ->leftJoin('g.users', 'users')
-        ->orderBy('COUNT(users)')
-        ->groupBy('g')
-        ->getQuery()
-        ->getResult();
+        /*
+            SELECT game.date, game.id, count(gu.user_id) as ref
+            FROM game
+            LEFT JOIN game_user as gu ON game.id = gu.game_id
+            GROUP BY game.id
+            ORDER BY ref, game.date
+        */
+
+        $em = $this->getEntityManager();
+
+        // use LEFT JOIN to include values : `count(u.id) = 0`
+        $query = $em->createQuery(
+            "SELECT g
+            FROM App\Entity\Game g
+            LEFT JOIN g.users u
+            GROUP BY g.id
+            ORDER BY count(u.id), g.date"
+        );
+        
+        return $query->getResult();
     }
     
     #################################################################################################
@@ -120,6 +134,7 @@ class GameRepository extends ServiceEntityRepository
 
         $em = $this->getEntityManager();
 
+        // Notice : JOIN == INNER JOIN
         $query = $em->createQuery(
             "SELECT g
             FROM App\Entity\Game g
