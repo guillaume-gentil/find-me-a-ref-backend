@@ -18,8 +18,7 @@ class Team
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $id;
@@ -27,8 +26,7 @@ class Team
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $name;
@@ -37,8 +35,7 @@ class Team
      * @ORM\ManyToOne(targetEntity=Club::class, inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $club;
@@ -47,8 +44,7 @@ class Team
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $category;

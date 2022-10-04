@@ -19,8 +19,7 @@ class Game
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $id;
@@ -29,8 +28,7 @@ class Game
      * @ORM\Column(type="datetime")
      * @Assert\NotBlank
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $date;
@@ -50,7 +48,7 @@ class Game
      * @ORM\JoinColumn(nullable=false)
      * @Assert\NotNull(message="the ID of arena is not correct.")
      * @Groups({
-     * "games_collection",
+     * "games_collection"
      * })
      */
     private $arena;
@@ -60,8 +58,7 @@ class Game
      * @ORM\JoinColumn(nullable=false)
      * @Assert\NotNull(message="the ID of type is not correct.")
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $type;
@@ -69,8 +66,7 @@ class Game
     /**
      * @ORM\ManyToMany(targetEntity=Team::class, inversedBy="games")
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $teams;
@@ -78,8 +74,7 @@ class Game
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="games")
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $users;

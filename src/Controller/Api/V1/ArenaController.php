@@ -63,8 +63,6 @@ class ArenaController extends AbstractController
         $arena->setLatitude($result['results'][0]['geometry']['lat']);
         $arena->setLongitude($result['results'][0]['geometry']['lng']);
 
-        dd($arena);
-
         $errors = $validator->validate($arena);
 
         if (count($errors) > 0) {
@@ -85,7 +83,7 @@ class ArenaController extends AbstractController
         $manager->flush();
 
         return $this->json($arena, Response::HTTP_CREATED, [], [
-            // 'groups' => 'game_item'
+            'groups' => 'games_collection'
         ]);
     }
 }
