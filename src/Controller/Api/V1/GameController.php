@@ -307,7 +307,7 @@ class GameController extends AbstractController
         }
         
         return $this->json($game, Response::HTTP_OK, [], [
-            'groups' => 'game_item'
+            'groups' => 'games_collection'
         ]);
     }
 
