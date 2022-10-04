@@ -200,6 +200,11 @@ class Game
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+        
+        // refresh indexes of users (store in ArrayCollection)
+        // fix response format issue (collection vs array) 
+        // source : https://stackoverflow.com/questions/35250599/reindexing-arraycollection-elements-in-restapi
+        $this->users = new ArrayCollection($this->users->getValues());
 
         return $this;
     }

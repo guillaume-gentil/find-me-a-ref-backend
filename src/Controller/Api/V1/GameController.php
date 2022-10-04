@@ -230,10 +230,10 @@ class GameController extends AbstractController
     }
 
     /**
-     * Add user (referee) on a game
-     * @Route("/games/{id}", name="add_user_on_game", methods={"PATCH"}, requirements={"id"="\d+"})
+     * Toggle user (referee) on a game
+     * @Route("/games/{id}", name="toggle_user_on_game", methods={"PATCH"}, requirements={"id"="\d+"})
      */
-    public function addUserOnGame(
+    public function toggleUserOnGame(
         Game $game = null, 
         Request $request, 
         ManagerRegistry $doctrine,
@@ -246,10 +246,11 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
         
+        // TODO: use token send by the Front-App instead of user_email
         // decode the request content (JSON -> array)
         $content = $request->toArray();
         $userEmailFromJSON = $content['user_email'];   
-
+        
         // find user by email receive by json file 
         $userFromJSON = $userRepository->findOneBy(array('email' => $userEmailFromJSON));
         $userId = $userFromJSON->getId();
@@ -258,7 +259,6 @@ class GameController extends AbstractController
         $userFromJWT = $this->getUser();
         $userEmailFromJWT = $userFromJWT->getUserIdentifier();
 
-        
         if($userEmailFromJSON === $userEmailFromJWT) {
 
             
@@ -273,8 +273,7 @@ class GameController extends AbstractController
             
             // toggle the engagement of a referee
             // Max users in each game = 2
-
-            // TODO : refaire cet algorythme
+            // TODO: simplifier l'algorythme ci-dessous
             //* utiliser les objets et non les ID
             //* si (utilisateur courant dans le game)
                 //* "l'arbitre se désengage"
@@ -282,7 +281,6 @@ class GameController extends AbstractController
                 //* "impossible d'ajouter, match complet
             //* sinon
                 //* "l'arbitre s'engage"
-                
             if (count($users) >= 2) {
                 if (in_array($userId, $users)) {
                     $game->removeUser($userRepository->find($userId));
@@ -296,12 +294,11 @@ class GameController extends AbstractController
                     $game->addUser($userRepository->find($userId));
                 }
             }
+            //TODO: Fin de l'algorythme
+            
             // TODO: make this action with a service
             $game->setUpdatedAt(new \DateTimeImmutable('now'));
     
-            // // refresh game's user collection
-            // $game = $gameRepository->findById($game->getId());
-
             $manager = $doctrine->getManager();
             $manager->flush();
         } else {
@@ -309,11 +306,7 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
         }
         
-        
-
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['game' => $game] OR $game ?
-        return $this->json(['game' => $game], Response::HTTP_OK, [], [
+        return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);
     }
