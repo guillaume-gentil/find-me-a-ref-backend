@@ -38,13 +38,22 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    role_hierarchy:
+        ROLE_TEAMHEAD:   ROLE_REFEREE
+        ROLE_ADMIN:     ROLE_TEAMHEAD
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/v1/games, roles: ROLE_REFEREE, methods:[POST] }
+        # access to users information only for admin 
+        - { path: ^/api/v1/users, roles: ROLE_ADMIN }
+        # access to POST PUT DELETE methods for any road only to admin
+        - { path: ^/api/v1, roles: ROLE_ADMIN, methods:[POST, PUT, DELETE] }
+        # access to patch a game for referee
         - { path: ^/api/v1/games/\d+, roles: ROLE_REFEREE, methods:[GET, PATCH] }
-        - { path: ^/api/v1, roles: PUBLIC_ACCESS }
+        # all other access only in get method for see all filters for everyone
+        - { path: ^/api/v1, roles: PUBLIC_ACCESS, methods:[GET] }
 
 
 when@test:
