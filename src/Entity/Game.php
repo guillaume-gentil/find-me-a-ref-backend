@@ -200,6 +200,7 @@ class Game
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+        $this->users = new ArrayCollection($this->users->getValues());
 
         return $this;
     }

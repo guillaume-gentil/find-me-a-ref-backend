@@ -258,18 +258,20 @@ class GameController extends AbstractController
         $userFromJWT = $this->getUser();
         $userEmailFromJWT = $userFromJWT->getUserIdentifier();
 
-        
+        // TODO
         if($userEmailFromJSON === $userEmailFromJWT) {
 
             
             // get all the Game's Users with too many dimensions
             $users_brut = $gameRepository->findAllRefByGame($game->getId());
             
+            //dump($users_brut);
             // remove one level from the Game's Users array
             $users = [];
             for ($i=0; $i < count($users_brut); $i++) { 
                 $users[] = $users_brut[$i]['id'];
             }
+            //dump($users);
             
             // toggle the engagement of a referee
             // Max users in each game = 2
@@ -309,11 +311,13 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
         }
         
+        $game->getUsers()->toArray();
+        //dump($game->getUsers());
         
-
+        //dd();
         //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
         //? should we send ['game' => $game] OR $game ?
-        return $this->json(['game' => $game], Response::HTTP_OK, [], [
+        return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);
     }
