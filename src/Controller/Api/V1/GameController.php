@@ -2,8 +2,13 @@
 
 namespace App\Controller\Api\V1;
 
+use App\Entity\Club;
 use App\Entity\Game;
+use App\Entity\Team;
+use App\Entity\Type;
 use App\Entity\User;
+use App\Entity\Arena;
+use App\Entity\Category;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,21 +27,11 @@ use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
  */
 class GameController extends AbstractController
 {
-    /**
-     * Get game's list
-     * @Route("/games", name="games_collection", methods={"GET"})
-     */
-    public function getGamesCollection(GameRepository $gameRepository): JsonResponse
-    {
-        $games = $gameRepository->findAll();
+    #################################################################################################
+    ### Home view standard (List)
+    #################################################################################################
 
-        // for data in array to avoid JSON hijacking we send data response under this form ['games' => $games]
-        return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_collection'
-        ]);
-    }
-
-    /**
+     /**
      * List of games order by date
      * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
      */
@@ -49,6 +44,10 @@ class GameController extends AbstractController
         ]);
 
     }
+
+    #################################################################################################
+    ### Home view with emergency filter
+    #################################################################################################
 
     /**
      * Get games order by number of users (referee)
@@ -63,6 +62,99 @@ class GameController extends AbstractController
         ]);
 
     }
+
+    #################################################################################################
+    ### Home view with filters
+    #################################################################################################
+
+    /**
+     * Get games by Type
+     * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByType(Type $type = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($type)) {
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByType($type->getId());
+
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+
+    /**
+     * Get games by Arena
+     * @Route("/arenas/{id}/games", name="games_by_arena", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByArena(Arena $arena = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($arena)) {
+            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByArena($arena->getId());
+
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+
+    /**
+     * Get games by Team
+     * @Route ("/teams/{id}/games", name="games_by_team", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByTeam(Team $team = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($team)) {
+            return $this->json(['error' => 'Team\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByTeam($team->getId());
+
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
+    /**
+     * Get games by Category
+     * @Route("/categories/{id}/games", name="games_by_category", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByCategory(Category $category = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($category)) {
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByCategory($category->getId());
+
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+    
+    /**
+     * Get games by Club
+     * @Route("/clubs/{id}/games", name="games_by_club", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function getGamesByClub(Club $club = null, GameRepository $gameRepository): JsonResponse
+    {
+        if(is_null($club)) {
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $games = $gameRepository->findGamesByClub($club->getId());
+
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+
+    #################################################################################################
+    ### Referee Engagement/disengagement (detail view)
+    #################################################################################################
 
     /**
      * Get one game by Id
@@ -79,6 +171,11 @@ class GameController extends AbstractController
             'groups' => 'game_item'
         ]);
     }
+
+    #################################################################################################
+    ### Managing's methods
+    #################################################################################################
+
 
     /**
      * Add new game
@@ -164,6 +261,7 @@ class GameController extends AbstractController
         
         if($userEmailFromJSON === $userEmailFromJWT) {
 
+            
             // get all the Game's Users with too many dimensions
             $users_brut = $gameRepository->findAllRefByGame($game->getId());
             
@@ -172,9 +270,19 @@ class GameController extends AbstractController
             for ($i=0; $i < count($users_brut); $i++) { 
                 $users[] = $users_brut[$i]['id'];
             }
-    
+            
             // toggle the engagement of a referee
             // Max users in each game = 2
+
+            // TODO : refaire cet algorythme
+            //* utiliser les objets et non les ID
+            //* si (utilisateur courant dans le game)
+                //* "l'arbitre se désengage"
+            //* sinon si (2 utilisateurs)
+                //* "impossible d'ajouter, match complet
+            //* sinon
+                //* "l'arbitre s'engage"
+                
             if (count($users) >= 2) {
                 if (in_array($userId, $users)) {
                     $game->removeUser($userRepository->find($userId));
@@ -191,6 +299,9 @@ class GameController extends AbstractController
             // TODO: make this action with a service
             $game->setUpdatedAt(new \DateTimeImmutable('now'));
     
+            // // refresh game's user collection
+            // $game = $gameRepository->findById($game->getId());
+
             $manager = $doctrine->getManager();
             $manager->flush();
         } else {
@@ -198,7 +309,11 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
         }
         
-        return $this->json($game, Response::HTTP_OK, [], [
+        
+
+        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
+        //? should we send ['game' => $game] OR $game ?
+        return $this->json(['game' => $game], Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);
     }

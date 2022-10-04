@@ -19,11 +19,7 @@ class Type
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team"
+     * "game_item"
      * })
      */
     private $id;
@@ -32,11 +28,7 @@ class Type
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team"
+     * "game_item"
      * })
      */
     private $name;
@@ -53,7 +45,6 @@ class Type
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="type")
-     * @Groups({"games_by_type"})
      */
     private $games;
 

@@ -24,13 +24,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club",
-     * "users_collection"
      * })
      */
     private $id;
@@ -40,13 +33,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club",
-     * "users_collection"
      * })
      */
     private $firstname;
@@ -64,13 +50,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Email
      * @groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club",
-     * "users_collection"
      * })
      */
     private $email;
@@ -91,13 +70,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="integer", nullable=true, unique=true)
      * @Groups({
+     * "games_collection",
      * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club",
-     * "users_collection"
      * })
      */
     private $licenceId;
@@ -106,13 +80,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club",
-     * "users_collection"
      * })
      */
     private $level;
@@ -132,12 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $longitude;
@@ -146,12 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $latitude;
@@ -175,13 +132,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club",
-     * "users_collection"
      * })
      */
     private $phoneNumber;

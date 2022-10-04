@@ -3,6 +3,7 @@
 namespace App\Controller\Api\V1;
 
 use App\Entity\Type;
+use App\Repository\GameRepository;
 use App\Repository\TypeRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,18 +27,4 @@ class TypeController extends AbstractController
         ]);
     }
 
-    /**
-     * Get type by Id
-     * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
-     */
-    public function getGamesByType(Type $type = null): JsonResponse
-    {
-        if(is_null($type)) {
-            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
-        }
-
-        return $this->json($type, Response::HTTP_OK, [], [
-            'groups' => 'games_by_type'
-        ]); 
-    }
 }

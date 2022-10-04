@@ -19,12 +19,7 @@ class Team
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $id;
@@ -33,12 +28,7 @@ class Team
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $name;
@@ -48,11 +38,7 @@ class Team
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
+     * "game_item"
      * })
      */
     private $club;
@@ -62,10 +48,7 @@ class Team
      * @ORM\JoinColumn(nullable=false)
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $category;
@@ -82,11 +65,6 @@ class Team
 
     /**
      * @ORM\ManyToMany(targetEntity=Game::class, mappedBy="teams")
-     * @Groups({
-     * "games_by_category",
-     * "games_by_team",
-     * "games_by_club"
-     * })
      */
     private $games;
 

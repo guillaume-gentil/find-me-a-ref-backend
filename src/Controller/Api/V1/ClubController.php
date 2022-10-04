@@ -26,18 +26,4 @@ class ClubController extends AbstractController
         ]);
     }
 
-    /**
-     * Get type by Id
-     * @Route("/clubs/{id}/games", name="games_by_club", methods={"GET"}, requirements={"id"="\d+"})
-     */
-    public function getGamesByClub(Club $club = null): JsonResponse
-    {
-        if(is_null($club)) {
-            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
-        }
-
-        return $this->json($club, Response::HTTP_OK, [], [
-            'groups' => 'games_by_club'
-        ]);   
-    }
 }
