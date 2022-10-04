@@ -20,6 +20,7 @@ class Arena
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $id;
@@ -29,6 +30,7 @@ class Arena
      * @Assert\NotBlank
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $name;
@@ -45,6 +47,7 @@ class Arena
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $zipCode;
@@ -53,6 +56,7 @@ class Arena
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $longitude;
@@ -61,6 +65,7 @@ class Arena
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $latitude;
@@ -77,9 +82,6 @@ class Arena
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="arena")
-     * @Groups({
-     * "games_by_arena"
-     * })
      */
     private $games;
 
