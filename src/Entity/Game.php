@@ -20,12 +20,7 @@ class Game
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $id;
@@ -35,12 +30,7 @@ class Game
      * @Assert\NotBlank
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $date;
@@ -62,10 +52,7 @@ class Game
      * @Assert\NotNull(message="the ID of arena is not correct.")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $arena;
@@ -76,11 +63,7 @@ class Game
      * @Assert\NotNull(message="the ID of type is not correct.")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $type;
@@ -89,9 +72,7 @@ class Game
      * @ORM\ManyToMany(targetEntity=Team::class, inversedBy="games")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_arena"
+     * "game_item"
      * })
      */
     private $teams;
@@ -100,12 +81,7 @@ class Game
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="games")
      * @Groups({
      * "games_collection",
-     * "game_item",
-     * "games_by_type",
-     * "games_by_category",
-     * "games_by_arena",
-     * "games_by_team",
-     * "games_by_club"
+     * "game_item"
      * })
      */
     private $users;

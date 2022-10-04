@@ -31,18 +31,18 @@ class GameController extends AbstractController
     ### Home view standard (List)
     #################################################################################################
 
-    /**
-     * Get game's list
-     * @Route("/games", name="games_collection", methods={"GET"})
+     /**
+     * List of games order by date
+     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
      */
-    public function getGamesCollection(GameRepository $gameRepository): JsonResponse
+    public function getGamesByDates(GameRepository $gameRepository): JsonResponse
     {
-        $games = $gameRepository->findAll();
+        $games = $gameRepository->findGamesOrderByDate();
 
-        // for data in array to avoid JSON hijacking we send data response under this form ['games' => $games]
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
+
     }
 
     #################################################################################################
@@ -68,20 +68,6 @@ class GameController extends AbstractController
     #################################################################################################
 
     /**
-     * List of games order by date
-     * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
-     */
-    public function getGamesByDates(GameRepository $gameRepository): JsonResponse
-    {
-        $games = $gameRepository->findGamesOrderByDate();
-
-        return $this->json(['games' => $games], Response::HTTP_OK, [], [
-            'groups' => 'games_collection'
-        ]);
-
-    }
-
-    /**
      * Get games by Type
      * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
      */
@@ -93,8 +79,6 @@ class GameController extends AbstractController
 
         $games = $gameRepository->findGamesByType($type->getId());
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['games' => $games] OR $games ?
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]); 
@@ -112,8 +96,6 @@ class GameController extends AbstractController
 
         $games = $gameRepository->findGamesByArena($arena->getId());
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['games' => $games] OR $games ?
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]); 
@@ -131,8 +113,6 @@ class GameController extends AbstractController
 
         $games = $gameRepository->findGamesByTeam($team->getId());
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['games' => $games] OR $games ?
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -150,8 +130,6 @@ class GameController extends AbstractController
 
         $games = $gameRepository->findGamesByCategory($category->getId());
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['games' => $games] OR $games ?
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]); 
@@ -159,7 +137,7 @@ class GameController extends AbstractController
     
     /**
      * Get games by Club
-     * @Route("/club/{id}/games", name="games_by_club", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route("/clubs/{id}/games", name="games_by_club", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByClub(Club $club = null, GameRepository $gameRepository): JsonResponse
     {
@@ -169,8 +147,6 @@ class GameController extends AbstractController
 
         $games = $gameRepository->findGamesByClub($club->getId());
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['games' => $games] OR $games ?
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]); 
@@ -191,8 +167,6 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
-        //TODO : check AJAX Security : https://cheatsheetseries.owasp.org/cheatsheets/AJAX_Security_Cheat_Sheet.html#always-return-json-with-an-object-on-the-outside
-        //? should we send ['game' => $game] OR $game ?
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'game_item'
         ]);

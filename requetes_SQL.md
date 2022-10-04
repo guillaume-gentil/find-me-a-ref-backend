@@ -22,7 +22,7 @@ ORDER BY ref
 ```sql
 SELECT user_id
 FROM game_user
-WHERE game_id = 43
+WHERE game_id = :id
 ```
 
 ## Find all games by type : `/api/v1/types/{id}/games`

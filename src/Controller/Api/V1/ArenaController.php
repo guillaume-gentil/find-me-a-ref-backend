@@ -31,21 +31,6 @@ class ArenaController extends AbstractController
     }
 
     /** 
-     * Get arena by Id
-     * @Route("/arenas/{id}/games", name="games_by_arena", methods={"GET"}, requirements={"id"="\d+"})
-     */
-    public function getGamesByArena(Arena $arena = null): JsonResponse
-    {
-        if(is_null($arena)) {
-            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
-        }
-
-        return $this->json($arena, Response::HTTP_OK, [], [
-            'groups' => 'games_by_arena'
-        ]); 
-    }
-
-    /** 
      * Add new Arena
      * @Route("/arenas", name="add_arena", methods={"POST"})
      */
