@@ -24,8 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer")
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $id;
@@ -35,8 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $firstname;
@@ -46,8 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $lastname;
@@ -58,8 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Email
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $email;
@@ -81,7 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer", nullable=true, unique=true)
      * @Groups({
      * "games_collection",
-     * "game_item",
      * })
      */
     private $licenceId;
@@ -90,7 +85,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
      * "games_collection",
-     * "game_item",
      * })
      */
     private $level;
@@ -110,8 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $longitude;
@@ -120,8 +113,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $latitude;
@@ -145,8 +137,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({
      * "games_collection",
-     * "users_collection",
-     * "game_item"
+     * "users_collection"
      * })
      */
     private $phoneNumber;

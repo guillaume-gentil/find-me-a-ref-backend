@@ -18,8 +18,7 @@ class Club
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $id;
@@ -27,8 +26,7 @@ class Club
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $name;
@@ -36,8 +34,7 @@ class Club
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $address;
@@ -50,8 +47,7 @@ class Club
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $longitude;
@@ -59,8 +55,7 @@ class Club
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({
-     * "games_collection",
-     * "game_item"
+     * "games_collection"
      * })
      */
     private $latitude;
