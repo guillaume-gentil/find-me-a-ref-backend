@@ -168,7 +168,7 @@ class GameController extends AbstractController
         }
 
         return $this->json($game, Response::HTTP_OK, [], [
-            'groups' => 'game_item'
+            'groups' => 'games_collection'
         ]);
     }
 
@@ -225,7 +225,7 @@ class GameController extends AbstractController
         $manager->flush();
 
         return $this->json($game, Response::HTTP_CREATED, [], [
-            'groups' => 'game_item'
+            'groups' => 'games_collection'
         ]);
     }
 
@@ -365,7 +365,7 @@ class GameController extends AbstractController
         $manager->flush();
 
         return $this->json($game, Response::HTTP_OK, [], [
-            'groups' => 'game_item'
+            'groups' => 'games_collection'
         ]);
     }
 

@@ -39,6 +39,7 @@ class Arena
      * @ORM\Column(type="string", length=255)
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $address;

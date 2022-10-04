@@ -52,6 +52,7 @@ class Game
      * @Assert\NotNull(message="the ID of arena is not correct.")
      * @Groups({
      * "games_collection",
+     * "game_item"
      * })
      */
     private $arena;
