@@ -134,7 +134,50 @@ class AppFixtures extends Fixture
         //User fixtures
 
         $users = [];
-        
+
+        // constant "user1-ref"
+        $user = new User();
+        $user->setFirstname("user1-ref-firstname");
+        $user->setLastname("user1-ref-lastname");
+        $user->setEmail("user1@ref.fr");
+        $user->setPhoneNumber("0601020304");
+        $user->setRoles(['ROLE_REFEREE']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        $user->setLicenceId($faker->randomNumber(6, true));
+        $refereeLevel = $findMeARefProvider->getRefereeLevel();
+        $user->setLevel($refereeLevel);
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // constant "user2-ref"
+        $user = new User();
+        $user->setFirstname("user2-ref-firstname");
+        $user->setLastname("user2-ref-lastname");
+        $user->setEmail("user2@ref.fr");
+        $user->setPhoneNumber("0604030201");
+        $user->setRoles(['ROLE_REFEREE']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        $user->setLicenceId($faker->randomNumber(6, true));
+        $refereeLevel = $findMeARefProvider->getRefereeLevel();
+        $user->setLevel($refereeLevel);
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // random users    
         for ($i = 1; $i <= 20; $i++) {
             $user = new User();
 
@@ -160,7 +203,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
             $users[] = $user;
-
+            
         }
 
         //Game fixtures
