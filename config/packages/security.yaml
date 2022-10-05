@@ -5,14 +5,32 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
+        login:
+            pattern: ^/api/v1/login
+            stateless: true
+            json_login:
+                check_path: /api/v1/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        api:
+            pattern:   ^/api/v1/
+            stateless: true
+            jwt: ~
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -20,11 +38,23 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    role_hierarchy:
+        ROLE_TEAMHEAD:   ROLE_REFEREE
+        ROLE_ADMIN:     ROLE_TEAMHEAD
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
+        # access to users information only for admin 
+        - { path: ^/api/v1/users, roles: ROLE_ADMIN }
+        # access to POST PUT DELETE methods for any road only to admin
+        - { path: ^/api/v1, roles: ROLE_ADMIN, methods:[POST, PUT, DELETE] }
+        # access to patch a game for referee
+        - { path: ^/api/v1/games/\d+, roles: ROLE_REFEREE, methods:[GET, PATCH] }
+        # all other access only in get method for see all filters for everyone
+        - { path: ^/api/v1, roles: PUBLIC_ACCESS, methods:[GET] }
+
 
 when@test:
     security:
