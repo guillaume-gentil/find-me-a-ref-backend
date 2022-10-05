@@ -137,8 +137,8 @@ class AppFixtures extends Fixture
 
         // constant "user1-ref"
         $user = new User();
-        $user->setFirstname("user1-ref-firstname");
-        $user->setLastname("user1-ref-lastname");
+        $user->setFirstname("user1");
+        $user->setLastname("Referee");
         $user->setEmail("ref1@user.fr");
         $user->setPhoneNumber("0601020304");
         $user->setRoles(['ROLE_REFEREE']);
@@ -158,8 +158,8 @@ class AppFixtures extends Fixture
 
         // constant "user2-ref"
         $user = new User();
-        $user->setFirstname("user2-ref-firstname");
-        $user->setLastname("user2-ref-lastname");
+        $user->setFirstname("user2");
+        $user->setLastname("Referee");
         $user->setEmail("ref2@user.fr");
         $user->setPhoneNumber("0604030201");
         $user->setRoles(['ROLE_REFEREE']);
@@ -179,8 +179,8 @@ class AppFixtures extends Fixture
 
         // constant "user3-th"
         $user = new User();
-        $user->setFirstname("user3-th-firstname");
-        $user->setLastname("user3-th-lastname");
+        $user->setFirstname("user3");
+        $user->setLastname("TeamHead");
         $user->setEmail("th@user.fr");
         $user->setPhoneNumber("0703030303");
         $user->setRoles(['ROLE_TEAMHEAD']);
@@ -198,11 +198,11 @@ class AppFixtures extends Fixture
 
         // constant "user4-admin"
         $user = new User();
-        $user->setFirstname("user4-admin-firstname");
-        $user->setLastname("user4-admin-lastname");
+        $user->setFirstname("user4");
+        $user->setLastname("Admin");
         $user->setEmail("admin@user.fr");
         $user->setPhoneNumber("0703030303");
-        $user->setRoles(['ROLE_TEAMHEAD']);
+        $user->setRoles(['ROLE_ADMIN']);
         //DEV: password for developpement : 'mdpfix'
         $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
         // no licence_id and no level
