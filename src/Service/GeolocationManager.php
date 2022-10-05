@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Service;
+
+
 use OpenCage\Geocoder\Geocoder;
 
 class GeolocationManager
@@ -22,6 +24,7 @@ class GeolocationManager
      */
     public function latitude($location)
     {
+        //$this->geocoder->setKey($this->apiKey);
         $geocoder = new $this->geocoder($this->apiKey);
         $result = $geocoder->geocode($location->getAddress());
         $latitude = $location->setLatitude($result['results'][0]['geometry']['lat']);
@@ -37,12 +40,13 @@ class GeolocationManager
      */
     public function longitude($location)
     {
-        $geocoder = new $this->geocoder($this->apiKey);
+        //$this->geocoder->setKey($this->apiKey);
+        $geocoder = new $this->geocoder->setKey($this->apiKey);
         $result = $geocoder->geocode($location->getAddress());
         $longitude = $location->setLongitude($result['results'][0]['geometry']['lng']);
         return $longitude;
     }
-    
+
     /* $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
         $result = $geocoder->geocode($arena->getAddress());
 
