@@ -139,7 +139,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setFirstname("user1-ref-firstname");
         $user->setLastname("user1-ref-lastname");
-        $user->setEmail("user1@ref.fr");
+        $user->setEmail("ref1@user.fr");
         $user->setPhoneNumber("0601020304");
         $user->setRoles(['ROLE_REFEREE']);
         //DEV: password for developpement : 'mdpfix'
@@ -160,7 +160,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setFirstname("user2-ref-firstname");
         $user->setLastname("user2-ref-lastname");
-        $user->setEmail("user2@ref.fr");
+        $user->setEmail("ref2@user.fr");
         $user->setPhoneNumber("0604030201");
         $user->setRoles(['ROLE_REFEREE']);
         //DEV: password for developpement : 'mdpfix'
@@ -168,6 +168,44 @@ class AppFixtures extends Fixture
         $user->setLicenceId($faker->randomNumber(6, true));
         $refereeLevel = $findMeARefProvider->getRefereeLevel();
         $user->setLevel($refereeLevel);
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // constant "user3-th"
+        $user = new User();
+        $user->setFirstname("user3-th-firstname");
+        $user->setLastname("user3-th-lastname");
+        $user->setEmail("th@user.fr");
+        $user->setPhoneNumber("0703030303");
+        $user->setRoles(['ROLE_TEAMHEAD']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        // no licence_id and no level
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // constant "user4-admin"
+        $user = new User();
+        $user->setFirstname("user4-admin-firstname");
+        $user->setLastname("user4-admin-lastname");
+        $user->setEmail("admin@user.fr");
+        $user->setPhoneNumber("0703030303");
+        $user->setRoles(['ROLE_TEAMHEAD']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        // no licence_id and no level
         $user->setAddress($findMeARefProvider->getAddress());
         $geocode = explode("#", $findMeARefProvider->getGeocode());
         $user->setLongitude($geocode[0]);
