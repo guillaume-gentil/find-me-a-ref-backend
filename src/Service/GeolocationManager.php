@@ -3,53 +3,33 @@
 namespace App\Service;
 
 
-use OpenCage\Geocoder\Geocoder;
-
 class GeolocationManager
 {
     private $apiKey;
-    private $geocoder;
 
-    public function __construct($apiKey, Geocoder $geocoder)
+    public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
-        $this->geocoder = $geocoder;
     }
 
     /**
-     * return latitude of adress with geocage API
-     * @param  $location adress to find latitude
-     *
-     * @return void
+     * Geocode the address thanks to OpenCage/Geocode API
+     * 
+     * @param string $location The address from the DB
+     * @param string $type Two choice : 'lat' for latitude or 'lng' for longitude
+     * 
+     * @return float
      */
-    public function latitude($location)
+    public function useGeocoder($location, $type)
     {
-        //$this->geocoder->setKey($this->apiKey);
-        $geocoder = new $this->geocoder($this->apiKey);
-        $result = $geocoder->geocode($location->getAddress());
-        $latitude = $location->setLatitude($result['results'][0]['geometry']['lat']);
-        return $latitude;
-
+        $geocoder = new \OpenCage\Geocoder\Geocoder($this->apiKey);
+        $result = $geocoder->geocode($location);
+        
+        if ($type == 'lat') {
+            return $result['results'][0]['geometry']['lat'];
+        } else if ($type == 'lng') {
+            return $result['results'][0]['geometry']['lng'];
+        }
     }
 
-    /**
-     * return longitude of address with geocage API
-     * @param  $location 
-     *
-     * @return void
-     */
-    public function longitude($location)
-    {
-        //$this->geocoder->setKey($this->apiKey);
-        $geocoder = new $this->geocoder->setKey($this->apiKey);
-        $result = $geocoder->geocode($location->getAddress());
-        $longitude = $location->setLongitude($result['results'][0]['geometry']['lng']);
-        return $longitude;
-    }
-
-    /* $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
-        $result = $geocoder->geocode($arena->getAddress());
-
-        $arena->setLatitude($result['results'][0]['geometry']['lat']);
-        $arena->setLongitude($result['results'][0]['geometry']['lng']); */
 }

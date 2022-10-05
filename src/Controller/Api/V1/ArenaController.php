@@ -64,10 +64,13 @@ class ArenaController extends AbstractController
 
         $arena->setLatitude($result['results'][0]['geometry']['lat']);
         $arena->setLongitude($result['results'][0]['geometry']['lng']); */
+
+        /* $result = $geolocationManager->useGeocoder($arena);
+        dd($result); */
+
+        $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), 'lat'));
         
-        $arena->setLatitude($geolocationManager->latitude($arena));
-        dd($arena->setLatitude());
-        $arena->setLongitude($geolocationManager->longitude($arena));
+        $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), 'lng'));
         $arena->setCreatedAt(new \DateTimeImmutable('now'));
         dd($arena);
 
