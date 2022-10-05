@@ -13,7 +13,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\GeolocationManager;
-use OpenCage\Geocoder\Geocoder;
 
 /**
  * @route("/api/v1", name="api_v1")
@@ -58,21 +57,10 @@ class ArenaController extends AbstractController
         // TODO create SERVICE/event for automatically add createdAt field.
         $arena = $serializer->deserialize($json, Arena::class, 'json');
 
-        // TODO create SERVICE/event for automatically add geocoding field (from opencage API).
-        /* $geocoder = new \OpenCage\Geocoder\Geocoder('8e14f9f8abbd4a7c9b30d907d724e3f4');
-        $result = $geocoder->geocode($arena->getAddress());
-
-        $arena->setLatitude($result['results'][0]['geometry']['lat']);
-        $arena->setLongitude($result['results'][0]['geometry']['lng']); */
-
-        /* $result = $geolocationManager->useGeocoder($arena);
-        dd($result); */
-
+        // for setting longitude and latitude use custom service from GeolocationManager
         $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), 'lat'));
-        
         $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), 'lng'));
         $arena->setCreatedAt(new \DateTimeImmutable('now'));
-        dd($arena);
 
         $errors = $validator->validate($arena);
 
