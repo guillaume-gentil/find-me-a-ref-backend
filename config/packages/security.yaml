@@ -46,6 +46,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
+        # access to users information
+        - { path: ^/api/v1/users/edit, roles: ROLE_REFEREE, methods:[GET, PUT] }
         # access to users information only for admin 
         - { path: ^/api/v1/users, roles: ROLE_ADMIN }
         # access to POST PUT DELETE methods for any road only to admin
