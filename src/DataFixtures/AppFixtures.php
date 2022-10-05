@@ -134,7 +134,88 @@ class AppFixtures extends Fixture
         //User fixtures
 
         $users = [];
-        
+
+        // constant "user1-ref"
+        $user = new User();
+        $user->setFirstname("user1");
+        $user->setLastname("Referee");
+        $user->setEmail("ref1@user.fr");
+        $user->setPhoneNumber("0601020304");
+        $user->setRoles(['ROLE_REFEREE']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        $user->setLicenceId($faker->randomNumber(6, true));
+        $refereeLevel = $findMeARefProvider->getRefereeLevel();
+        $user->setLevel($refereeLevel);
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // constant "user2-ref"
+        $user = new User();
+        $user->setFirstname("user2");
+        $user->setLastname("Referee");
+        $user->setEmail("ref2@user.fr");
+        $user->setPhoneNumber("0604030201");
+        $user->setRoles(['ROLE_REFEREE']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        $user->setLicenceId($faker->randomNumber(6, true));
+        $refereeLevel = $findMeARefProvider->getRefereeLevel();
+        $user->setLevel($refereeLevel);
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // constant "user3-th"
+        $user = new User();
+        $user->setFirstname("user3");
+        $user->setLastname("TeamHead");
+        $user->setEmail("th@user.fr");
+        $user->setPhoneNumber("0703030303");
+        $user->setRoles(['ROLE_TEAMHEAD']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        // no licence_id and no level
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // constant "user4-admin"
+        $user = new User();
+        $user->setFirstname("user4");
+        $user->setLastname("Admin");
+        $user->setEmail("admin@user.fr");
+        $user->setPhoneNumber("0703030303");
+        $user->setRoles(['ROLE_ADMIN']);
+        //DEV: password for developpement : 'mdpfix'
+        $user->setPassword('$2y$13$Znq9b79/qWlzmKO4DjCtROwriD70ugPlLuX6LlCyOxcL17l0o41jq');  // generate with `bin/console security:hash-password`
+        // no licence_id and no level
+        $user->setAddress($findMeARefProvider->getAddress());
+        $geocode = explode("#", $findMeARefProvider->getGeocode());
+        $user->setLongitude($geocode[0]);
+        $user->setLatitude($geocode[1]);
+        $user->setZipCode($faker->randomNumber(5, true));
+        $user->setCreatedAt(new \DateTimeImmutable("now"));
+        $manager->persist($user);
+        $users[] = $user;
+
+        // random users    
         for ($i = 1; $i <= 20; $i++) {
             $user = new User();
 
@@ -160,7 +241,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
             $users[] = $user;
-
+            
         }
 
         //Game fixtures
