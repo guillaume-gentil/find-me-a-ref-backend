@@ -27,4 +27,20 @@ class TypeController extends AbstractController
         ]);
     }
 
+    /**
+     * get type of game by id
+     * @Route("/types/{id}", name="types_by_id", methods={"GET"} ,requirements={"id"="\d+"})
+     *
+     */
+    public function getTypeById(Type $type = null ): JsonResponse
+    {
+        if(is_null($type)) {
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($type, Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
 }
