@@ -180,6 +180,7 @@ class UserController extends AbstractController
 
         $userRole = $userAdmin->getRoles();
 
+        //TODO: check if it's necessary to control the user's ROLE (may be the lexik's component do it automatically) 
         if (in_array("ROLE_ADMIN", $userRole)) {
 
             $userRepository->remove($user, true);
