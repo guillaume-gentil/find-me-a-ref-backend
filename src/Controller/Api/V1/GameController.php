@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 
 /**
@@ -235,77 +236,51 @@ class GameController extends AbstractController
      */
     public function toggleUserOnGame(
         Game $game = null, 
-        Request $request, 
-        ManagerRegistry $doctrine,
         GameRepository $gameRepository,
-        UserRepository $userRepository
+        ManagerRegistry $doctrine
         ): JsonResponse
     {
-        // manage 404 error
+        // manage 404 error if the game ID doesn't exist in DB
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-
-        // TODO: il est préférable de décoder le token JWT envoyé par le Front (lors de la request) directement dans le back et non dans le front (ou bien les deux !)
-        // decode the request content (JSON -> array)
-        $content = $request->toArray();
-        $userEmailFromJSON = $content['user_email'];   
         
-        // find user by email receive by json file 
-        $userFromJSON = $userRepository->findOneBy(array('email' => $userEmailFromJSON));
-        $userId = $userFromJSON->getId();
-  
-        // get user from JWT for check
-        $userFromJWT = $this->getUser();
-        $userEmailFromJWT = $userFromJWT->getUserIdentifier();
-
-        if($userEmailFromJSON === $userEmailFromJWT) {
-
-            
-            // get all the Game's Users with too many dimensions
-            $users_brut = $gameRepository->findAllRefByGame($game->getId());
-            
-            // remove one level from the Game's Users array
-            $users = [];
-            for ($i=0; $i < count($users_brut); $i++) { 
-                $users[] = $users_brut[$i]['id'];
-            }
-            
-            // toggle the engagement of a referee
-            // Max users in each game = 2
-            // TODO: simplifier l'algorythme ci-dessous
-            //* utiliser les objets et non les ID
-            //* si (utilisateur courant dans le game)
-                //* "l'arbitre se désengage"
-            //* sinon si (2 utilisateurs)
-                //* "impossible d'ajouter, match complet
-            //* sinon
-                //* "l'arbitre s'engage"
-            if (count($users) >= 2) {
-                if (in_array($userId, $users)) {
-                    $game->removeUser($userRepository->find($userId));
-                } else {
-                    return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
-                }
-            } elseif (count($users) < 2) {
-                if (in_array($userId, $users)) {
-                    $game->removeUser($userRepository->find($userId));
-                } else {
-                    $game->addUser($userRepository->find($userId));
-                }
-            }
-            //TODO: Fin de l'algorythme
-            
-            // TODO: make this action with a service
-            $game->setUpdatedAt(new \DateTimeImmutable('now'));
-    
-            $manager = $doctrine->getManager();
-            $manager->flush();
-        } else {
-            // this error occur when a hacker try to send a different email between JSON request and JWT
-            return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
+        // get all the Game's Users presvious changes
+        $previousUsers = $gameRepository->findAllRefByGame($game->getId());
+        
+        // get Users' ID in one level array
+        $previousUsersID = [];
+        for ($i=0; $i < count($previousUsers); $i++) { 
+            $previousUsersID[] = $previousUsers[$i]['id'];
         }
         
+        //TODO: does the lexik's component check the role and expiration date automatically ? If not, do it.
+
+        // get user from token
+        $currentUser = $this->getUser();
+        $currentUserID = $currentUser->getId();
+
+        // toggle the engagement of a referee
+        // Max users in each game = 2
+        if (in_array($currentUserID, $previousUsersID)) {
+            // the current User is already engage => he want to disengage
+            $game->removeUser($currentUser);
+        } elseif (count($previousUsersID) >= 2) {
+            // there is already two referee (User) for this game, it's full
+            return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
+        } else {
+            // the game need more referee AND the current User isn't already engage on it
+            $game->addUser($currentUser);
+        }
+        
+        // TODO: make this action with a service ?
+        $game->setUpdatedAt(new \DateTimeImmutable('now'));
+        
+        // update DB
+        $manager = $doctrine->getManager();
+        $manager->flush();
+
+        // return the new Game object
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
