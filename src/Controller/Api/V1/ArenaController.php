@@ -42,7 +42,7 @@ class ArenaController extends AbstractController
     public function getArneaById(Arena $arena = null): JsonResponse
     {
         if(is_null($arena)) {
-            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($arena, Response::HTTP_OK, [], [
@@ -121,7 +121,7 @@ class ArenaController extends AbstractController
     ): JsonResponse
     {
         if(is_null($arena)) {
-            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         $previousAddress = $arena->getAddress();
@@ -172,7 +172,7 @@ class ArenaController extends AbstractController
     public function delete(Arena $arena =null, ArenaRepository $arenaRepository): JsonResponse
     {
         if(is_null($arena)) {
-            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         $arenaRepository->remove($arena, true);
