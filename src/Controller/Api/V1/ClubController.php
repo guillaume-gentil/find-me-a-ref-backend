@@ -4,14 +4,16 @@ namespace App\Controller\Api\V1;
 
 use App\Entity\Club;
 use App\Repository\ClubRepository;
+use App\Service\GeolocationManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Service\GeolocationManager;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @route("/api/v1", name="api_v1")
@@ -89,6 +91,56 @@ class ClubController extends AbstractController
             'groups' => 'games_collection'
         ]);
 
+    }
+
+    /**
+     * Edit a club
+     *
+     * @Route("/clubs/{id}/edit", name="clubs_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
+     */
+    public function edit(
+        Club $club= null,
+        Request $request,
+        SerializerInterface $serializer,
+        ManagerRegistry $doctrine,
+        ValidatorInterface $validator,
+        GeolocationManager $geolocationManager
+    ): JsonResponse
+    {
+        if(is_null($club)) {
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        if($request->isMethod('put')) {
+            $json = $request->getContent();
+            $club = $serializer->deserialize($json, Club::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $club]);
+            
+            $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), 'lng'));
+            $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), 'lat'));
+            $club->setUpdatedAt(new \DateTimeImmutable('now'));
+
+            $errors = $validator->validate($club);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                
+            }
+            
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        }
+
+        return $this->json($club, Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
     }
 
 }

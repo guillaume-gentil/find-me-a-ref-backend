@@ -89,7 +89,7 @@ class TypeController extends AbstractController
      * @Route("/types/{id}/edit", name="types_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
      */
     public function edit(
-        Type $type,
+        Type $type= null,
         Request $request,
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
@@ -108,7 +108,8 @@ class TypeController extends AbstractController
 
             $json = $request->getContent();
             $type = $serializer->deserialize($json, Type::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $type]);
-            
+            $type->setUpdatedAt(new \DateTimeImmutable('now'));
+
             $errors = $validator->validate($type);
             if (count($errors) > 0) {
                 $cleanErrors = [];
@@ -121,9 +122,8 @@ class TypeController extends AbstractController
                     $cleanErrors[$property][] = $message;
                 }
                 return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                
             }
-    
-            $type->setUpdatedAt(new \DateTimeImmutable('now'));
             
             $manager = $doctrine->getManager();
             $manager->flush();
