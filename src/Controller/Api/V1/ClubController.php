@@ -35,7 +35,7 @@ class ClubController extends AbstractController
     /**
      * get club by id
      * 
-     * @Route("/clubs/{id}", name="clubs-by-id", methods={"GET"} ,requirements={"id"="\d+"})
+     * @Route("/clubs/{id}", name="clubs_by_id", methods={"GET"}, requirements={"id"="\d+"})
      *
      * @return JsonResponse
      */
@@ -114,7 +114,7 @@ class ClubController extends AbstractController
         if($request->isMethod('put')) {
 
             $json = $request->getContent();
-            $club =$serializer->deserialize($json, Club::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $club]);
+            $club = $serializer->deserialize($json, Club::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $club]);
 
             if($club->getAddress() != $previousAddress) {
 
