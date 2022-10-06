@@ -4,11 +4,13 @@ namespace App\Controller\Api\V1;
 
 use App\Entity\Type;
 use App\Repository\TypeRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -51,10 +53,10 @@ class TypeController extends AbstractController
      * @Route("/types", name="types_add", methods={"POST"})
      */
     public function addType(
-    Request $request,
-    SerializerInterface $serializer,
-    TypeRepository $typeRepository,
-    ValidatorInterface $validator
+        Request $request,
+        SerializerInterface $serializer,
+        TypeRepository $typeRepository,
+        ValidatorInterface $validator
     ): JsonResponse
     {
         $json = $request->getContent();
@@ -75,6 +77,54 @@ class TypeController extends AbstractController
         }
         $type->setCreatedAt(new \DateTimeImmutable('now'));
         $typeRepository->add($type, true);
+
+        return $this->json($type, Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
+    /**
+     * Edit a type of game
+     *
+     * @Route("/types/{id}/edit", name="types_edit", methods={"PUT"}, requirements={"id"="\d+"})
+     */
+    public function edit(
+        Type $type,
+        Request $request,
+        SerializerInterface $serializer,
+        ManagerRegistry $doctrine,
+        ValidatorInterface $validator
+    ): JsonResponse
+    {
+        if(is_null($type)) {
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+        /*
+            {
+                "name":"new name"
+            }
+         */
+        $json = $request->getContent();
+        $type = $serializer->deserialize($json, Type::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $type]);
+        
+        $errors = $validator->validate($type);
+        if (count($errors) > 0) {
+            $cleanErrors = [];
+            /**
+             * @var ConstraintViolation $error
+             */
+            foreach($errors as $error) {
+                $property = $error->getPropertyPath();
+                $message = $error->getMessage();
+                $cleanErrors[$property][] = $message;
+            }
+            return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+        }
+
+        $type->setUpdatedAt(new \DateTimeImmutable('now'));
+        
+        $manager = $doctrine->getManager();
+        $manager->flush();
 
         return $this->json($type, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
