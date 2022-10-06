@@ -132,6 +132,22 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    /**
+     * Delete a category
+     *
+     * @Route("/categories/{id}", name="categories-delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     * @return JsonResponse
+     */
+    public function delete(Category $category =null, CategoryRepository $categoryRepository): JsonResponse
+    {
+        if(is_null($category)) {
+            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $categoryRepository->remove($category, true);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
 
 
 }
