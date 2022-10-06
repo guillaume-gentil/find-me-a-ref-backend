@@ -161,4 +161,21 @@ class ArenaController extends AbstractController
             'groups' => 'games_collection'
         ]);
     }
+
+    /**
+     * Delete an Arena
+     * 
+     * @Route("/arenas/{id}", name="arenas_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     *
+     * @return JsonResponse
+     */
+    public function delete(Arena $arena =null, ArenaRepository $arenaRepository): JsonResponse
+    {
+        if(is_null($arena)) {
+            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $arenaRepository->remove($arena, true);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
 }
