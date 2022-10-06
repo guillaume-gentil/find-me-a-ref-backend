@@ -72,7 +72,7 @@ class Game
     private $teams;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="games")
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="games", fetch="EAGER")
      * @Groups({
      * "games_collection"
      * })
