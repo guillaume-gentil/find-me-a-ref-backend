@@ -140,7 +140,7 @@ class TypeController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function delete(Type $type, TypeRepository $typeRepository): JsonResponse
+    public function delete(Type $type = null, TypeRepository $typeRepository): JsonResponse
     {
         if(is_null($type)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);

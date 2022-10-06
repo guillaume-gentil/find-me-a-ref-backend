@@ -149,4 +149,28 @@ class ClubController extends AbstractController
         ]);
     }
 
+    /**
+     * Delete a club
+     * @Route("/clubs/{id}", name="clubs_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     * 
+     * @return JsonResponse
+     */
+    public function delete(Club $club =null, ClubRepository $clubRepository): JsonResponse
+    {
+        if(is_null($club)) {
+            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        //TODO: check if it's necessary to control the user's ROLE (may be the lexik's component do it automatically)
+        $user = $this->getUser();
+        $userRole = $user->getRoles();
+        if (in_array("ROLE_ADMIN", $userRole)) {
+
+            $clubRepository->remove($club, true);
+            return $this->json(null, Response::HTTP_NO_CONTENT); 
+        } else {
+            return $this->json(['you don\'t have the rights to do this action'], Response::HTTP_FORBIDDEN);
+        }
+    }
+
 }
