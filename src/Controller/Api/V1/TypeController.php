@@ -52,7 +52,7 @@ class TypeController extends AbstractController
      *
      * @Route("/types", name="types_add", methods={"POST"})
      */
-    public function addType(
+    public function add(
         Request $request,
         SerializerInterface $serializer,
         TypeRepository $typeRepository,
@@ -86,7 +86,7 @@ class TypeController extends AbstractController
     /**
      * Edit a type of game
      *
-     * @Route("/types/{id}/edit", name="types_edit", methods={"PUT"}, requirements={"id"="\d+"})
+     * @Route("/types/{id}/edit", name="types_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
      */
     public function edit(
         Type $type,
@@ -104,27 +104,30 @@ class TypeController extends AbstractController
                 "name":"new name"
             }
          */
-        $json = $request->getContent();
-        $type = $serializer->deserialize($json, Type::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $type]);
-        
-        $errors = $validator->validate($type);
-        if (count($errors) > 0) {
-            $cleanErrors = [];
-            /**
-             * @var ConstraintViolation $error
-             */
-            foreach($errors as $error) {
-                $property = $error->getPropertyPath();
-                $message = $error->getMessage();
-                $cleanErrors[$property][] = $message;
-            }
-            return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
-        }
+        if ($request->isMethod('put')) {
 
-        $type->setUpdatedAt(new \DateTimeImmutable('now'));
-        
-        $manager = $doctrine->getManager();
-        $manager->flush();
+            $json = $request->getContent();
+            $type = $serializer->deserialize($json, Type::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $type]);
+            
+            $errors = $validator->validate($type);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+            }
+    
+            $type->setUpdatedAt(new \DateTimeImmutable('now'));
+            
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        }
 
         return $this->json($type, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
@@ -133,7 +136,7 @@ class TypeController extends AbstractController
 
     /**
      * Delete a type
-     * @Route("/types/{id}", name="type_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     * @Route("/types/{id}", name="types_delete", methods={"DELETE"}, requirements={"id"="\d+"})
      *
      * @return JsonResponse
      */
@@ -142,6 +145,8 @@ class TypeController extends AbstractController
         if(is_null($type)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
+
+        //TODO: check if it's necessary to control the user's ROLE (may be the lexik's component do it automatically)
         $user = $this->getUser();
         $userRole = $user->getRoles();
         if (in_array("ROLE_ADMIN", $userRole)) {
