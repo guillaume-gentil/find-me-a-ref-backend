@@ -237,64 +237,50 @@ class GameController extends AbstractController
     public function toggleUserOnGame(
         Game $game = null, 
         GameRepository $gameRepository,
-        UserRepository $userRepository,
         ManagerRegistry $doctrine
         ): JsonResponse
     {
-        //* récupère l'id du game et l econtrôle (existe-t-il ?)
         // manage 404 error if the game ID doesn't exist in DB
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-
+        
         // get all the Game's Users presvious changes
-        // $previousUsers = $gameRepository->findAllRefByGame($game->getId());
-        $previousUsers = $gameRepository->findBy(["users" => $game]);
+        $previousUsers = $gameRepository->findAllRefByGame($game->getId());
         
+        // get Users' ID in one level array
+        $previousUsersID = [];
+        for ($i=0; $i < count($previousUsers); $i++) { 
+            $previousUsersID[] = $previousUsers[$i]['id'];
+        }
         
-        //TODO: does the lexik's component check the role and expiration date automatically?
-        //* récupère le Token (pas besoin de contrôle, le composant lexik le fait déjà en automatique : contrôle de la date expiration + role selon les access_control) et le transforme en user
+        //TODO: does the lexik's component check the role and expiration date automatically ? If not, do it.
+
         // get user from token
         $currentUser = $this->getUser();
-        dd($previousUsers, $currentUser);
-        
+        $currentUserID = $currentUser->getId();
 
-        
-        
         // toggle the engagement of a referee
         // Max users in each game = 2
-        // TODO: simplifier l'algorythme ci-dessous
-        //* utiliser les objets et non les ID
-        //* si (utilisateur courant dans le game)
-            //* "l'arbitre se désengage"
-        //* sinon si (2 utilisateurs)
-            //* "impossible d'ajouter, match complet
-        //* sinon
-            //* "l'arbitre s'engage"
-        if (count($users) >= 2) {
-            if (in_array($userId, $users)) {
-                $game->removeUser($userRepository->find($userId));
-            } else {
-                return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-        } elseif (count($users) < 2) {
-            if (in_array($userId, $users)) {
-                $game->removeUser($userRepository->find($userId));
-            } else {
-                $game->addUser($userRepository->find($userId));
-            }
+        if (in_array($currentUserID, $previousUsersID)) {
+            // the current User is already engage => he want to disengage
+            $game->removeUser($currentUser);
+        } elseif (count($previousUsersID) >= 2) {
+            // there is already two referee (User) for this game, it's full
+            return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
+        } else {
+            // the game need more referee AND the current User isn't already engage on it
+            $game->addUser($currentUser);
         }
-        //TODO: Fin de l'algorythme
         
-        // TODO: make this action with a service
+        // TODO: make this action with a service ?
         $game->setUpdatedAt(new \DateTimeImmutable('now'));
-
+        
+        // update DB
         $manager = $doctrine->getManager();
         $manager->flush();
 
-
-
-        
+        // return the new Game object
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
