@@ -141,7 +141,7 @@ class CategoryController extends AbstractController
     public function delete(Category $category =null, CategoryRepository $categoryRepository): JsonResponse
     {
         if(is_null($category)) {
-            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
         $categoryRepository->remove($category, true);
