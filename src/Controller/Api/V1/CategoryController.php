@@ -26,4 +26,23 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    /**
+     * get category by id
+     *
+     * @Route("/categories/{id}", name="categories_by_id", methods={"GET"} ,requirements={"id"="\d+"})
+     * @return JsonResponse
+     */
+    public function getCategoryById(Category $category =null): JsonResponse
+    {
+        if(is_null($category)) {
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($category, Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
+
+
 }
