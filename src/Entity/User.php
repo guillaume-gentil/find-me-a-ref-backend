@@ -77,6 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer", nullable=true, unique=true)
      * @Groups({
      * "games_collection",
+     * "users_collection"
      * })
      */
     private $licenceId;
@@ -85,6 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
      * "games_collection",
+     * "users_collection"
      * })
      */
     private $level;
@@ -97,6 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"users_collection"})
      */
     private $zipCode;
 
