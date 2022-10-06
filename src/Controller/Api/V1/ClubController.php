@@ -110,14 +110,20 @@ class ClubController extends AbstractController
         if(is_null($club)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-
+        $previousAddress = $club->getAddress();
         if($request->isMethod('put')) {
+
             $json = $request->getContent();
-            $club = $serializer->deserialize($json, Club::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $club]);
-            
-            $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), 'lng'));
-            $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), 'lat'));
+            $club =$serializer->deserialize($json, Club::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $club]);
+
+            if($club->getAddress() != $previousAddress) {
+
+                $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), 'lng'));
+                $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), 'lat'));
+            }
+
             $club->setUpdatedAt(new \DateTimeImmutable('now'));
+
 
             $errors = $validator->validate($club);
             if (count($errors) > 0) {
