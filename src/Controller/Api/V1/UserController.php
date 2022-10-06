@@ -108,20 +108,14 @@ class UserController extends AbstractController
         ManagerRegistry $doctrine
     ): JsonResponse
     {
-        //* récupérer le token
-        // doc : https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/9-access-authenticated-jwt-token.html
-        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
-
-        //* récupérer un objet User correspondant à l'email en BDD
-        $user = $userRepository->findOneBy([
-            'email' => $decodedJwtToken["username"]
-        ]);
-
+        // On récupère l'utilisateur connecté
+        $user = $this->getUser();
         // on récupère son mot de passe avant modification éventuelle
         $previousPassword = $user->getPassword();
 
         // on récupère l'adresse avant modification éventuelle
         $previousAddress = $user->getAddress();
+        //dd($previousAddress);
 
         //? source : how to check HTTP method : https://stackoverflow.com/questions/22852305/how-can-i-check-if-request-was-a-post-or-get-request-in-symfony2-or-symfony3
         if ($request->isMethod('put')) {
@@ -169,5 +163,30 @@ class UserController extends AbstractController
         return $this->json($user, Response::HTTP_OK, [], [
             'groups' => 'users_collection'
         ]);
+    }
+
+    /**
+     * Delete a user
+     * @Route("/users/{id}", name="users_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     */
+    public function delete(User $user = null, UserRepository $userRepository)
+    {
+        // manage 404 error
+        if(is_null($user)) {
+            return $this->json(['error' => 'User\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $userAdmin = $this->getUser();
+
+        $userRole = $userAdmin->getRoles();
+
+        //TODO: check if it's necessary to control the user's ROLE (may be the lexik's component do it automatically) 
+        if (in_array("ROLE_ADMIN", $userRole)) {
+
+            $userRepository->remove($user, true);
+            return $this->json(null, Response::HTTP_NO_CONTENT); 
+        } else {
+            return $this->json(['you don\'t have the rights to do this action'], Response::HTTP_FORBIDDEN);
+        }
     }
 }
