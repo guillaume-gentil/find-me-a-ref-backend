@@ -177,7 +177,6 @@ class UserController extends AbstractController
         }
 
         $userAdmin = $this->getUser();
-
         $userRole = $userAdmin->getRoles();
 
         //TODO: check if it's necessary to control the user's ROLE (may be the lexik's component do it automatically) 
