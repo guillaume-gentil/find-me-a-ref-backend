@@ -380,7 +380,7 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
-        // TODO add role admin
+
         $user = $this->getUser();
         $userRole = $user->getRoles();
         if (in_array("ROLE_ADMIN", $userRole)) {
