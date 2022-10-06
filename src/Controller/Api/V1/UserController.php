@@ -4,16 +4,20 @@ namespace App\Controller\Api\V1;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\GeolocationManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @route("/api/v1", name="api_v1")
@@ -84,6 +88,84 @@ class UserController extends AbstractController
         //dd($user);
         $userRepository->add($user, true);
 
+        return $this->json($user, Response::HTTP_OK, [], [
+            'groups' => 'users_collection'
+        ]);
+    }
+
+    /**
+     * @Route("/users/edit", name="users_edit", methods={"GET", "PUT"})
+     */
+    public function edit(
+        Request $request,
+        SerializerInterface $serializer,
+        UserRepository $userRepository,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher,
+        TokenStorageInterface $tokenStorageInterface,
+        JWTTokenManagerInterface $jwtManager,
+        GeolocationManager $geolocationManager,
+        ManagerRegistry $doctrine
+    ): JsonResponse
+    {
+        //* récupérer le token
+        // doc : https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/9-access-authenticated-jwt-token.html
+        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+
+        //* récupérer un objet User correspondant à l'email en BDD
+        $user = $userRepository->findOneBy([
+            'email' => $decodedJwtToken["username"]
+        ]);
+
+        // on récupère son mot de passe avant modification éventuelle
+        $previousPassword = $user->getPassword();
+
+        // on récupère l'adresse avant modification éventuelle
+        $previousAddress = $user->getAddress();
+
+        //? source : how to check HTTP method : https://stackoverflow.com/questions/22852305/how-can-i-check-if-request-was-a-post-or-get-request-in-symfony2-or-symfony3
+        if ($request->isMethod('put')) {
+            //! requête PUT
+            //* 2. récupère les nouvelles données de l'utilisateurs (transmises via le formulaire Front)
+            $json = $request->getContent();
+
+            //* on remplce les anciennes données par les nouvelles
+            $user = $serializer->deserialize($json, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+
+            //* vérification du mot de passe
+            if ($user->getPassword() != $previousPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+            }
+
+            //* set les valeurs non envoyée (updatedAt, longitudes, latitudes)
+            $user->setUpdatedAt(new \DateTimeImmutable('now'));
+
+            if ($user->getAddress() != $previousAddress) {
+                $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
+                $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
+            }
+
+            //* vérification des erreurs
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach ($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+            }
+            
+            //* puis flush()
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        }
+
+        //* puis envoie de la réponse
         return $this->json($user, Response::HTTP_OK, [], [
             'groups' => 'users_collection'
         ]);

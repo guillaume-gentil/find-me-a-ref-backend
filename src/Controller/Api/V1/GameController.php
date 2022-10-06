@@ -245,8 +245,8 @@ class GameController extends AbstractController
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-        
-        // TODO: use token send by the Front-App instead of user_email
+
+        // TODO: il est préférable de décoder le token JWT envoyé par le Front (lors de la request) directement dans le back et non dans le front (ou bien les deux !)
         // decode the request content (JSON -> array)
         $content = $request->toArray();
         $userEmailFromJSON = $content['user_email'];   
