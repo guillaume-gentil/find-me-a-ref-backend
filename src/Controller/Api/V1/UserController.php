@@ -167,27 +167,25 @@ class UserController extends AbstractController
 
     /**
      * Delete a user
-     * @Route("/users/", name="users_delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     * @Route("/users/{id}", name="users_delete", methods={"DELETE"}, requirements={"id"="\d+"})
      */
-    public function delete(/*User $user = null,*/ UserRepository $userRepository)
+    public function delete(User $user = null, UserRepository $userRepository)
     {
         // manage 404 error
-       /*  if(is_null($user)) {
+        if(is_null($user)) {
             return $this->json(['error' => 'User\'s ID not found !'], Response::HTTP_NOT_FOUND);
-        } */
+        }
 
-        // TODO add role admin
         $userAdmin = $this->getUser();
-        dump($userAdmin);
-        $userRole = $userAdmin->getRoles();
-        dd($userRole);
 
-        /* if (in_array("ROLE_ADMIN", $userRole)) {
+        $userRole = $userAdmin->getRoles();
+
+        if (in_array("ROLE_ADMIN", $userRole)) {
 
             $userRepository->remove($user, true);
             return $this->json(null, Response::HTTP_NO_CONTENT); 
         } else {
             return $this->json(['you don\'t have the rights to do this action'], Response::HTTP_FORBIDDEN);
-        } */
+        }
     }
 }
