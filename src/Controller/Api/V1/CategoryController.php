@@ -4,11 +4,13 @@ namespace App\Controller\Api\V1;
 
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -78,6 +80,52 @@ class CategoryController extends AbstractController
         }
 
         $categoryRepository->add($category, true);
+
+        return $this->json($category, Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
+    /**
+     * Edit a category
+     * 
+     * @Route("/categories/{id}/edit", name="categories_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
+     */
+    public function edit(
+        Category $category =null,
+        Request $request,
+        SerializerInterface $serializer,
+        ManagerRegistry $doctrine,
+        ValidatorInterface $validator
+    ): JsonResponse
+    {
+        if(is_null($category)) {
+            return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        if($request->isMethod('put')) {
+            $json = $request->getContent();
+            $category = $serializer->deserialize($json, Category::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $category]);
+            $category->setUpdatedAt(new \DateTimeImmutable('now'));
+
+            $errors = $validator->validate($category);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                
+            }
+            
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        }
 
         return $this->json($category, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
