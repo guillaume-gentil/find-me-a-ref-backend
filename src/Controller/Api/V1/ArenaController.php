@@ -13,6 +13,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\GeolocationManager;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @route("/api/v1", name="api_v1")
@@ -31,11 +33,28 @@ class ArenaController extends AbstractController
         ]);
     }
 
+    /**
+     * get arena by id
+     * @Route("/arenas/{id}", name="arenas_by_id", methods={"GET"}, requirements={"id"="\d+"})
+     * 
+     * @return JsonResponse
+     */
+    public function getArneaById(Arena $arena = null): JsonResponse
+    {
+        if(is_null($arena)) {
+            return $this->json(['error' => 'Club\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($arena, Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
     /** 
      * Add new Arena
      * @Route("/arenas", name="add_arena", methods={"POST"})
      */
-    public function addArena(
+    public function add(
         Request $request,
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
@@ -82,6 +101,63 @@ class ArenaController extends AbstractController
         $manager->flush();
 
         return $this->json($arena, Response::HTTP_CREATED, [], [
+            'groups' => 'games_collection'
+        ]);
+    }
+
+    /**
+     * Edit an Arena
+     *
+     * @Route("/arenas/{id}/edit", name="arenas_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
+     * @return JsonResponse
+     */
+    public function edit(
+        Arena $arena =null,
+        Request $request,
+        SerializerInterface $serializer,
+        ManagerRegistry $doctrine,
+        ValidatorInterface $validator,
+        GeolocationManager $geolocationManager
+    ): JsonResponse
+    {
+        if(is_null($arena)) {
+            return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
+        }
+
+        $previousAddress = $arena->getAddress();
+
+        if($request->isMethod('put')) {
+
+            $json = $request->getContent();
+            $arena= $serializer->deserialize($json, Arena::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $arena]);
+
+            if($arena->getAddress() != $previousAddress) {
+                $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), 'lng'));
+                $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), 'lat'));
+            }
+
+            $arena->setUpdatedAt(new \DateTimeImmutable('now'));
+
+            $errors = $validator->validate($arena);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                
+            }
+
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        }
+
+        return $this->json($arena, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
     }
