@@ -114,6 +114,9 @@ class UserController extends AbstractController
         $previousPassword = $user->getPassword();
 
         // on récupère l'adresse avant modification éventuelle
+        /**
+         * @var User $user
+         */
         $previousAddress = $user->getAddress();
         //dd($previousAddress);
 

@@ -258,6 +258,9 @@ class GameController extends AbstractController
 
         // get user from token
         $currentUser = $this->getUser();
+        /**
+         * @var User $currentUser
+         */
         $currentUserID = $currentUser->getId();
 
         // toggle the engagement of a referee
