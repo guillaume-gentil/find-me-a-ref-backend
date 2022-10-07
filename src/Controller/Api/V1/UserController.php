@@ -112,6 +112,7 @@ class UserController extends AbstractController
         $user = $this->getUser();
         // on récupère son mot de passe avant modification éventuelle
         $previousPassword = $user->getPassword();
+        //dd($previousPassword);
 
         // on récupère l'adresse avant modification éventuelle
         /**
@@ -129,34 +130,51 @@ class UserController extends AbstractController
             //* on remplce les anciennes données par les nouvelles
             $user = $serializer->deserialize($json, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
 
-            //* vérification du mot de passe
-            if ($user->getPassword() != $previousPassword) {
-                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-            }
-
+            
             //* set les valeurs non envoyée (updatedAt, longitudes, latitudes)
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
-
+            
             if ($user->getAddress() != $previousAddress) {
                 $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
                 $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
             }
-
-            //* vérification des erreurs
-            $errors = $validator->validate($user);
-            if (count($errors) > 0) {
-                $cleanErrors = [];
-                /**
-                 * @var ConstraintViolation $error
-                 */
-                foreach ($errors as $error) {
-                    $property = $error->getPropertyPath();
-                    $message = $error->getMessage();
-                    $cleanErrors[$property][] = $message;
-                }
-                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
-            }
             
+            //* vérification du mot de passe
+            if ($user->getPassword() != $previousPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+                //$errors = $validator->validate($user);
+                $errors = $validator->validate($user,null, ['users_new_password']);
+                if (count($errors) > 0) {
+                    $cleanErrors = [];
+                    /**
+                     * @var ConstraintViolation $error
+                     */
+                    foreach ($errors as $error) {
+                        $property = $error->getPropertyPath();
+                        $message = $error->getMessage();
+                        $cleanErrors[$property][] = $message;
+                    }
+                    return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                }
+            }else{
+
+                //* vérification des erreurs
+                $errors = $validator->validate($user);
+                //$errors = $validator->validate($user,null, ['users_new_password']);
+                if (count($errors) > 0) {
+                    $cleanErrors = [];
+                    /**
+                     * @var ConstraintViolation $error
+                     */
+                    foreach ($errors as $error) {
+                        $property = $error->getPropertyPath();
+                        $message = $error->getMessage();
+                        $cleanErrors[$property][] = $message;
+                    }
+                    return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                }
+            }
+            $user->setPassword($previousPassword);
             //* puis flush()
             $manager = $doctrine->getManager();
             $manager->flush();
