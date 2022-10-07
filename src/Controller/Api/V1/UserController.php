@@ -112,14 +112,12 @@ class UserController extends AbstractController
         $user = $this->getUser();
         // on récupère son mot de passe avant modification éventuelle
         $previousPassword = $user->getPassword();
-        //dd($previousPassword);
 
         // on récupère l'adresse avant modification éventuelle
         /**
          * @var User $user
          */
         $previousAddress = $user->getAddress();
-        //dd($previousAddress);
 
         //? source : how to check HTTP method : https://stackoverflow.com/questions/22852305/how-can-i-check-if-request-was-a-post-or-get-request-in-symfony2-or-symfony3
         if ($request->isMethod('put')) {
@@ -142,7 +140,6 @@ class UserController extends AbstractController
             //* vérification du mot de passe
             if ($user->getPassword() != $previousPassword) {
                 $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-                //$errors = $validator->validate($user);
                 $errors = $validator->validate($user,null, ['users_new_password']);
                 if (count($errors) > 0) {
                     $cleanErrors = [];
@@ -160,7 +157,6 @@ class UserController extends AbstractController
 
                 //* vérification des erreurs
                 $errors = $validator->validate($user);
-                //$errors = $validator->validate($user,null, ['users_new_password']);
                 if (count($errors) > 0) {
                     $cleanErrors = [];
                     /**
