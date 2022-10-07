@@ -16,7 +16,7 @@ use App\Service\GeolocationManager;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 /**
- * @route("/api/v1", name="api_v1")
+ * @Route("/api/v1", name="api_v1")
  */
 class ArenaController extends AbstractController
 {
@@ -57,7 +57,7 @@ class ArenaController extends AbstractController
     public function add(
         Request $request,
         SerializerInterface $serializer,
-        ManagerRegistry $doctrine,
+        ArenaRepository $arenaRepository,
         ValidatorInterface $validator,
         GeolocationManager $geolocationManager
     ): JsonResponse
@@ -89,9 +89,8 @@ class ArenaController extends AbstractController
         }
         
         // if all the data are OK => save item in DB
-        $manager = $doctrine->getManager();
-        $manager->persist($arena);
-        $manager->flush();
+        $arenaRepository->add($arena, true);
+
 
         // response : return the new Arena object 
         return $this->json($arena, Response::HTTP_CREATED, [], [
@@ -105,7 +104,7 @@ class ArenaController extends AbstractController
      * @Route("/arenas/{id}/edit", name="arenas_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
      */
     public function edit(
-        Arena $arena =null,
+        Arena $arena = null,
         Request $request,
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
@@ -122,7 +121,6 @@ class ArenaController extends AbstractController
         $previousAddress = $arena->getAddress();
 
         if($request->isMethod('put')) {
-            
             // get the new data from the request (JSON)
             $json = $request->getContent();
             $arena= $serializer->deserialize($json, Arena::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $arena]);
@@ -149,7 +147,6 @@ class ArenaController extends AbstractController
                     $cleanErrors[$property][] = $message;
                 }
                 return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
-                
             }
 
             // if all data are OK => save changes in DB
@@ -159,7 +156,7 @@ class ArenaController extends AbstractController
                 ;
         }
 
-        // response : return the new Arena object
+        // response : return the actual object ("GET") or the new object ("PUT")
         return $this->json($arena, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -169,8 +166,6 @@ class ArenaController extends AbstractController
      * Delete an Arena
      * 
      * @Route("/arenas/{id}", name="arenas_delete", methods={"DELETE"}, requirements={"id"="\d+"})
-     *
-     * @return JsonResponse
      */
     public function delete(Arena $arena =null, ArenaRepository $arenaRepository): JsonResponse
     {
