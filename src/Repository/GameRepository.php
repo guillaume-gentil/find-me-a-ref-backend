@@ -89,6 +89,7 @@ class GameRepository extends ServiceEntityRepository
             FROM game
             JOIN type ON type.id = game.type_id
             WHERE type.id = 31
+            ORDER BY game.date
         */
 
         $em = $this->getEntityManager();
@@ -96,7 +97,8 @@ class GameRepository extends ServiceEntityRepository
         $query = $em->createQuery(
             "SELECT g
             FROM App\Entity\Game g
-            WHERE g.type = :id"
+            WHERE g.type = :id
+            ORDER BY g.date"
         )->setParameter('id', $typeId);
         
         return $query->getResult();
@@ -109,6 +111,7 @@ class GameRepository extends ServiceEntityRepository
             FROM game
             JOIN arena ON arena.id = game.arena_id
             WHERE arena.id = :id
+            ORDER BY game.date
         */
 
         $em = $this->getEntityManager();
@@ -116,7 +119,8 @@ class GameRepository extends ServiceEntityRepository
         $query = $em->createQuery(
             "SELECT g
             FROM App\Entity\Game g
-            WHERE g.arena = :id"
+            WHERE g.arena = :id
+            ORDER BY g.date"
         )->setParameter('id', $arenaId);
         
         return $query->getResult();
@@ -130,6 +134,7 @@ class GameRepository extends ServiceEntityRepository
             JOIN game_team ON game_id = game.id
             JOIN team ON team_id = team.id
             WHERE team.id = 76
+            ORDER BY game.date
         */
 
         $em = $this->getEntityManager();
@@ -139,7 +144,8 @@ class GameRepository extends ServiceEntityRepository
             "SELECT g
             FROM App\Entity\Game g
             JOIN g.teams t
-            WITH t.id = :id"
+            WITH t.id = :id
+            ORDER BY g.date"
         )->setParameter('id', $teamId);
         
         return $query->getResult();
@@ -154,6 +160,7 @@ class GameRepository extends ServiceEntityRepository
             JOIN team ON team_id = team.id
             JOIN category ON team.category_id = category.id
             WHERE category.id = :id
+            ORDER BY game.date
         */
 
         $em = $this->getEntityManager();
@@ -162,7 +169,8 @@ class GameRepository extends ServiceEntityRepository
             "SELECT g
             FROM App\Entity\Game g
             JOIN g.teams t
-            WITH t.category = :id"
+            WITH t.category = :id
+            ORDER BY g.date"
         )->setParameter('id', $categoryId);
         
         return $query->getResult();
@@ -177,6 +185,7 @@ class GameRepository extends ServiceEntityRepository
             JOIN team ON team_id = team.id
             JOIN club ON team.club_id = club.id
             WHERE club.id = :id
+            ORDER BY game.date
         */
 
         $em = $this->getEntityManager();
@@ -185,7 +194,8 @@ class GameRepository extends ServiceEntityRepository
             "SELECT g
             FROM App\Entity\Game g
             JOIN g.teams t
-            WITH t.club = :id"
+            WITH t.club = :id
+            ORDER BY g.date"
         )->setParameter('id', $clubId);
         
         return $query->getResult();
