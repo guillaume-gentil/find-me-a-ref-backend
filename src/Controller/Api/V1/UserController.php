@@ -93,17 +93,87 @@ class UserController extends AbstractController
         ]);
     }
 
+
+    //TODO: the two methods : editForAdmin and edit should be refactored
+    /**
+     * @Route("/users/{id}/edit", name="users_edit_for_admin", methods={"GET", "PUT"}, requirements={"id"="\d+"})
+     */
+    public function editForAdmin(
+        User $user,
+        Request $request,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher,
+        GeolocationManager $geolocationManager,
+        ManagerRegistry $doctrine
+    ): JsonResponse
+    {
+        // on récupère son mot de passe avant modification éventuelle
+        $previousPassword = $user->getPassword();
+
+        // on récupère l'adresse avant modification éventuelle
+        /**
+         * @var User $user
+         */
+        $previousAddress = $user->getAddress();
+        //dd($previousAddress);
+
+        //? source : how to check HTTP method : https://stackoverflow.com/questions/22852305/how-can-i-check-if-request-was-a-post-or-get-request-in-symfony2-or-symfony3
+        if ($request->isMethod('put')) {
+            //! requête PUT
+            //* 2. récupère les nouvelles données de l'utilisateurs (transmises via le formulaire Front)
+            $json = $request->getContent();
+
+            //* on remplce les anciennes données par les nouvelles
+            $user = $serializer->deserialize($json, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+
+            //* vérification du mot de passe
+            if ($user->getPassword() != $previousPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+            }
+
+            //* set les valeurs non envoyée (updatedAt, longitudes, latitudes)
+            $user->setUpdatedAt(new \DateTimeImmutable('now'));
+
+            if ($user->getAddress() != $previousAddress) {
+                $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
+                $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
+            }
+
+            //* vérification des erreurs
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach ($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+            }
+            
+            //* puis flush()
+            $manager = $doctrine->getManager();
+            $manager->flush();
+        }
+
+        //* puis envoie de la réponse
+        return $this->json($user, Response::HTTP_OK, [], [
+            'groups' => 'users_collection'
+        ]);
+    }
+
     /**
      * @Route("/users/edit", name="users_edit", methods={"GET", "PUT"})
      */
     public function edit(
         Request $request,
         SerializerInterface $serializer,
-        UserRepository $userRepository,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
-        TokenStorageInterface $tokenStorageInterface,
-        JWTTokenManagerInterface $jwtManager,
         GeolocationManager $geolocationManager,
         ManagerRegistry $doctrine
     ): JsonResponse
