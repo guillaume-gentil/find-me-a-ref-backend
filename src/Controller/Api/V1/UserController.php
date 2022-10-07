@@ -118,7 +118,6 @@ class UserController extends AbstractController
          * @var User $user
          */
         $previousAddress = $user->getAddress();
-        //dd($previousAddress);
 
         //? source : how to check HTTP method : https://stackoverflow.com/questions/22852305/how-can-i-check-if-request-was-a-post-or-get-request-in-symfony2-or-symfony3
         if ($request->isMethod('put')) {
@@ -129,34 +128,49 @@ class UserController extends AbstractController
             //* on remplce les anciennes données par les nouvelles
             $user = $serializer->deserialize($json, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
 
-            //* vérification du mot de passe
-            if ($user->getPassword() != $previousPassword) {
-                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-            }
-
+            
             //* set les valeurs non envoyée (updatedAt, longitudes, latitudes)
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
-
+            
             if ($user->getAddress() != $previousAddress) {
                 $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
                 $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
             }
-
-            //* vérification des erreurs
-            $errors = $validator->validate($user);
-            if (count($errors) > 0) {
-                $cleanErrors = [];
-                /**
-                 * @var ConstraintViolation $error
-                 */
-                foreach ($errors as $error) {
-                    $property = $error->getPropertyPath();
-                    $message = $error->getMessage();
-                    $cleanErrors[$property][] = $message;
-                }
-                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
-            }
             
+            //* vérification du mot de passe
+            if ($user->getPassword() != $previousPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+                $errors = $validator->validate($user,null, ['users_new_password']);
+                if (count($errors) > 0) {
+                    $cleanErrors = [];
+                    /**
+                     * @var ConstraintViolation $error
+                     */
+                    foreach ($errors as $error) {
+                        $property = $error->getPropertyPath();
+                        $message = $error->getMessage();
+                        $cleanErrors[$property][] = $message;
+                    }
+                    return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                }
+            }else{
+
+                //* vérification des erreurs
+                $errors = $validator->validate($user);
+                if (count($errors) > 0) {
+                    $cleanErrors = [];
+                    /**
+                     * @var ConstraintViolation $error
+                     */
+                    foreach ($errors as $error) {
+                        $property = $error->getPropertyPath();
+                        $message = $error->getMessage();
+                        $cleanErrors[$property][] = $message;
+                    }
+                    return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                }
+            }
+            $user->setPassword($previousPassword);
             //* puis flush()
             $manager = $doctrine->getManager();
             $manager->flush();
