@@ -220,10 +220,6 @@ class UserController extends AbstractController
             // check modification of password
             if ($user->getPassword() != $previousPassword) {
 
-                //TODO: urgent vérifier la logique de mise à jour d'un mot de passe (ça fonctionne mal !)
-                $userPassword = $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-
-                // check the Assert (Entity's constraints) using group
                 $errors = $validator->validate($user, null, ['users_new_password']);
                 if (count($errors) > 0) {
                     $cleanErrors = [];
@@ -237,11 +233,11 @@ class UserController extends AbstractController
                     }
                     return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
                 }
-                // TODO: urgent vérifier la logique de mise à jour d'un mot de passe (ça fonctionne mal !)
-                $user->setPassword($userPassword);
+                // Wee need to hash password after use constraint violations
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             } else {
-                // If user don't modif his password
+                // If user don't modify his password
                 
                 // check the Assert (Entity's constraints)
                 $errors = $validator->validate($user);
