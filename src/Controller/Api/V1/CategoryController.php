@@ -15,27 +15,28 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @route("/api/v1", name="api_v1")
+ * @Route("/api/v1", name="api_v1")
  */
 class CategoryController extends AbstractController
 {
     /**
+     * Get a list of all the Categories
      * @Route("/categories", name="categories", methods={"GET"} )
      */
     public function getCategories(CategoryRepository $categoryRepository): JsonResponse
     {
         $categories = $categoryRepository->findAll();
 
+        // response : return all Categories
         return $this->json(['categories' => $categories], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
     }
 
     /**
-     * get category by id
+     * Get category by id
      *
      * @Route("/categories/{id}", name="categories_by_id", methods={"GET"} ,requirements={"id"="\d+"})
-     * @return JsonResponse
      */
     public function getCategoryById(Category $category =null): JsonResponse
     {
@@ -43,6 +44,7 @@ class CategoryController extends AbstractController
             return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
+        // response : return the Category
         return $this->json($category, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -61,10 +63,14 @@ class CategoryController extends AbstractController
         ValidatorInterface $validator
     ): JsonResponse
     {
+        // get the new data from the request (JSON)
         $json = $request->getContent();
         $category = $serializer->deserialize($json, Category::class, 'json');
+        
+        // initialize the property createdAt
         $category->setCreatedAt(new \DateTimeImmutable('now'));
 
+        // check the Assert (Entity's constraints)
         $errors = $validator->validate($category);
         if (count($errors) > 0) {
             $cleanErrors = [];
@@ -79,8 +85,10 @@ class CategoryController extends AbstractController
             return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
         }
 
+        // if all the data are OK => save item in DB
         $categoryRepository->add($category, true);
 
+        // response : return the new Category object
         return $this->json($category, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -99,15 +107,22 @@ class CategoryController extends AbstractController
         ValidatorInterface $validator
     ): JsonResponse
     {
+        // validate the Category ID sent in URL
         if(is_null($category)) {
             return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
+        // do action only if the HTTP method of the request is PUT (= the user request an update)
         if($request->isMethod('put')) {
+
+            // get the new data from the request (JSON)
             $json = $request->getContent();
             $category = $serializer->deserialize($json, Category::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $category]);
+            
+            // update the property updatedAt
             $category->setUpdatedAt(new \DateTimeImmutable('now'));
 
+            // check the Assert (Entity's constraints)
             $errors = $validator->validate($category);
             if (count($errors) > 0) {
                 $cleanErrors = [];
@@ -123,10 +138,14 @@ class CategoryController extends AbstractController
                 
             }
             
-            $manager = $doctrine->getManager();
-            $manager->flush();
+            // if all the data are OK => save changes in DB
+            $doctrine
+                ->getManager()
+                ->flush()
+                ;
         }
 
+        // response : return the actual object ("GET") or the new object ("PUT")
         return $this->json($category, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -136,18 +155,18 @@ class CategoryController extends AbstractController
      * Delete a category
      *
      * @Route("/categories/{id}", name="categories-delete", methods={"DELETE"}, requirements={"id"="\d+"})
-     * @return JsonResponse
      */
     public function delete(Category $category =null, CategoryRepository $categoryRepository): JsonResponse
     {
+        // validate the Category ID sent in URL
         if(is_null($category)) {
             return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-
+        // Delete the Category
         $categoryRepository->remove($category, true);
+
+        // response : return OK code without content
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
-
-
 
 }

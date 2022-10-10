@@ -15,33 +15,37 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @route("/api/v1", name="api_v1")
+ * @Route("/api/v1", name="api_v1")
  */
 class TypeController extends AbstractController
 {
     /**
+     * Get a list of all the Types
      * @Route("/types", name="types", methods={"GET"})
      */
     public function getTypes(TypeRepository $typeRepository): JsonResponse
     {
         $types = $typeRepository->findAll();
 
+        // response : return all Types
         return $this->json(['types' => $types], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
     }
 
     /**
-     * get type of game by id
+     * Get type of game by id
      * 
      * @Route("/types/{id}", name="types_by_id", methods={"GET"} ,requirements={"id"="\d+"})
      */
     public function getTypeById(Type $type = null ): JsonResponse
     {
+        // validate the Type ID sent in URL
         if(is_null($type)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
+        // response : return the Type
         return $this->json($type, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -59,9 +63,14 @@ class TypeController extends AbstractController
         ValidatorInterface $validator
     ): JsonResponse
     {
+        // get the new data from the request (JSON)
         $json = $request->getContent();
         $type = $serializer->deserialize($json, Type::class, 'json');
 
+        // initialize the property createdAt
+        $type->setCreatedAt(new \DateTimeImmutable('now'));
+
+        // check the Assert (Entity's constraints)
         $errors = $validator->validate($type);
         if (count($errors) > 0) {
             $cleanErrors = [];
@@ -75,9 +84,11 @@ class TypeController extends AbstractController
             }
             return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
         }
-        $type->setCreatedAt(new \DateTimeImmutable('now'));
+
+         // if all the data are OK => save item in DB
         $typeRepository->add($type, true);
 
+        // response : return the new Type object 
         return $this->json($type, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -89,27 +100,28 @@ class TypeController extends AbstractController
      * @Route("/types/{id}/edit", name="types_edit", methods={"GET","PUT"}, requirements={"id"="\d+"})
      */
     public function edit(
-        Type $type= null,
+        Type $type = null,
         Request $request,
         SerializerInterface $serializer,
         ManagerRegistry $doctrine,
         ValidatorInterface $validator
     ): JsonResponse
     {
+        // validate the Type ID sent in URL
         if(is_null($type)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
-        /*
-            {
-                "name":"new name"
-            }
-         */
-        if ($request->isMethod('put')) {
 
+        if ($request->isMethod('put')) {
+            // get the new data from the request (JSON)
             $json = $request->getContent();
+
+            // populate current object with new values
             $type = $serializer->deserialize($json, Type::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $type]);
+            
             $type->setUpdatedAt(new \DateTimeImmutable('now'));
 
+            // check the Assert (Entity's constraints)
             $errors = $validator->validate($type);
             if (count($errors) > 0) {
                 $cleanErrors = [];
@@ -125,10 +137,14 @@ class TypeController extends AbstractController
                 
             }
             
-            $manager = $doctrine->getManager();
-            $manager->flush();
+            // if all the data are OK => save changes in DB
+            $doctrine
+                ->getManager()
+                ->flush()
+                ;
         }
 
+        // response : return the actual object ("GET") or the new object ("PUT")
         return $this->json($type, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -137,25 +153,19 @@ class TypeController extends AbstractController
     /**
      * Delete a type
      * @Route("/types/{id}", name="types_delete", methods={"DELETE"}, requirements={"id"="\d+"})
-     *
-     * @return JsonResponse
      */
     public function delete(Type $type = null, TypeRepository $typeRepository): JsonResponse
     {
+        // validate the Type ID sent in URL
         if(is_null($type)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
-        //TODO: check if it's necessary to control the user's ROLE (may be the lexik's component do it automatically)
-        $user = $this->getUser();
-        $userRole = $user->getRoles();
-        if (in_array("ROLE_ADMIN", $userRole)) {
+        // delete the Type
+        $typeRepository->remove($type, true);
 
-            $typeRepository->remove($type, true);
-            return $this->json(null, Response::HTTP_NO_CONTENT); 
-        } else {
-            return $this->json(['you don\'t have the rights to do this action'], Response::HTTP_FORBIDDEN);
-        }
+        // response : return OK code without content
+        return $this->json(null, Response::HTTP_NO_CONTENT); 
     }
 
 }
