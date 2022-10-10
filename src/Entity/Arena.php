@@ -35,6 +35,7 @@ class Arena
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      * @Groups({
      * "games_collection"
      * })

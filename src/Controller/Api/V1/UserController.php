@@ -65,7 +65,8 @@ class UserController extends AbstractController
         SerializerInterface $serializer,
         UserRepository $userRepository,
         ValidatorInterface $validator,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        GeolocationManager $geolocationManager
         ): JsonResponse
     {
         // get the new data from the request (JSON)
@@ -75,8 +76,18 @@ class UserController extends AbstractController
         // hash the user password before save it in DB
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
+        if (!empty($user->getAddress())) {
+            $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
+            $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
+        }
+
         // initialize the property createdAt
         $user->setCreatedAt(new \DateTimeImmutable('now'));
+
+        // an admin could be create only by another admin
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return $this->json(['error' => 'Veuillez contacter l\'administrateur du site'] , Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         // check the Assert (Entity's constraints)
         $errors = $validator->validate($user);
@@ -135,11 +146,6 @@ class UserController extends AbstractController
             // populate current object with new values
             $user = $serializer->deserialize($json, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
 
-            // hash the user password before save it in DB only if it's changed
-            if ($user->getPassword() != $previousPassword) {
-                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-            }
-
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
 
             // retreive from API the Geocode values only if the address change
@@ -147,21 +153,48 @@ class UserController extends AbstractController
                 $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
                 $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
             }
+            
+            // check modification of password
+            if ($user->getPassword() != $previousPassword) {
 
-            // check the Assert (Entity's constraints)
-            $errors = $validator->validate($user);
-            if (count($errors) > 0) {
-                $cleanErrors = [];
-                /**
-                 * @var ConstraintViolation $error
-                 */
-                foreach ($errors as $error) {
-                    $property = $error->getPropertyPath();
-                    $message = $error->getMessage();
-                    $cleanErrors[$property][] = $message;
+                $errors = $validator->validate($user, null, ['users_new_password']);
+                if (count($errors) > 0) {
+                    $cleanErrors = [];
+                    /**
+                     * @var ConstraintViolation $error
+                     */
+                    foreach ($errors as $error) {
+                        $property = $error->getPropertyPath();
+                        $message = $error->getMessage();
+                        $cleanErrors[$property][] = $message;
+                    }
+                    return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
                 }
-                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                // We need to hash password after use constraint violations
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+
+            } else {
+                // If user don't modify his password
+                
+                // check the Assert (Entity's constraints)
+                $errors = $validator->validate($user);
+                if (count($errors) > 0) {
+                    $cleanErrors = [];
+                    /**
+                     * @var ConstraintViolation $error
+                     */
+                    foreach ($errors as $error) {
+                        $property = $error->getPropertyPath();
+                        $message = $error->getMessage();
+                        $cleanErrors[$property][] = $message;
+                    }
+                    return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
+                }
             }
+            // hash the user password before save it in DB only if it's changed
+            // if ($user->getPassword() != $previousPassword) {
+                // $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+            // }
             
             // if all data are OK => save changes in DB
             $doctrine
@@ -233,7 +266,7 @@ class UserController extends AbstractController
                     }
                     return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
                 }
-                // Wee need to hash password after use constraint violations
+                // We need to hash password after use constraint violations
                 $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             } else {
