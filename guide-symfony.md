@@ -265,3 +265,26 @@ installer le bundle
 ```bash
 composer require symfony/validator doctrine/annotations
 ```
+
+## installation du twig bundle
+
+Pour éviter de nombreux conflits lors de la mise en production, nous installons le composant twig bundle
+
+```bash
+composer require symfony/twig-bundle
+```
+
+## Installation d'un mailer
+
+- installer le composant mailer
+
+```bash
+composer require symfony/mailer
+```
+
+- configuration pour envoyer les mails depuis Gmail (*3rd party transport*)
+
+```bash
+composer require symfony/google-mailer
+```
+
