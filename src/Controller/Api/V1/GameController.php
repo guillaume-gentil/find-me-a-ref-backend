@@ -20,10 +20,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 
 /**
- * @route("/api/v1", name="api_v1")
+ * @Route("/api/v1", name="api_v1")
  */
 class GameController extends AbstractController
 {
@@ -33,10 +34,12 @@ class GameController extends AbstractController
 
      /**
      * List of games order by date
+     * 
      * @Route("/games-by-dates", name="games_by_dates", methods={"GET"})
      */
     public function getGamesByDates(GameRepository $gameRepository): JsonResponse
     {
+        // looklike findAll method but order by date and limit to up or egal than today
         $games = $gameRepository->findGamesOrderByDate();
 
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
@@ -51,10 +54,12 @@ class GameController extends AbstractController
 
     /**
      * Get games order by number of users (referee)
+     * 
      * @Route("/games-by-users", name="games_by_users", methods={"GET"})
      */
     public function getGamesByUsers(GameRepository $gameRepository): JsonResponse
     {
+        
         $games = $gameRepository->findGamesOrderByNumberOfUser();
 
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
@@ -69,10 +74,12 @@ class GameController extends AbstractController
 
     /**
      * Get games by Type
+     * 
      * @Route("/types/{id}/games", name="games_by_type", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByType(Type $type = null, GameRepository $gameRepository): JsonResponse
     {
+        // validate the Type ID sent in URL
         if(is_null($type)) {
             return $this->json(['error' => 'Type\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
@@ -86,10 +93,12 @@ class GameController extends AbstractController
 
     /**
      * Get games by Arena
+     * 
      * @Route("/arenas/{id}/games", name="games_by_arena", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByArena(Arena $arena = null, GameRepository $gameRepository): JsonResponse
     {
+        // validate the Arena ID sent in URL
         if(is_null($arena)) {
             return $this->json(['error' => 'Arena\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
@@ -103,10 +112,12 @@ class GameController extends AbstractController
 
     /**
      * Get games by Team
+     * 
      * @Route ("/teams/{id}/games", name="games_by_team", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByTeam(Team $team = null, GameRepository $gameRepository): JsonResponse
     {
+        // validate the Team ID sent in URL
         if(is_null($team)) {
             return $this->json(['error' => 'Team\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
@@ -120,10 +131,12 @@ class GameController extends AbstractController
 
     /**
      * Get games by Category
+     * 
      * @Route("/categories/{id}/games", name="games_by_category", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGamesByCategory(Category $category = null, GameRepository $gameRepository): JsonResponse
     {
+        // validate the Category ID sent in URL
         if(is_null($category)) {
             return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
@@ -141,6 +154,7 @@ class GameController extends AbstractController
      */
     public function getGamesByClub(Club $club = null, GameRepository $gameRepository): JsonResponse
     {
+        // validate the Club ID sent in URL
         if(is_null($club)) {
             return $this->json(['error' => 'Category\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
@@ -158,15 +172,17 @@ class GameController extends AbstractController
 
     /**
      * Get one game by Id
+     * 
      * @Route("/games/{id}", name="game_by_id", methods={"GET"}, requirements={"id"="\d+"})
      */
     public function getGameById(Game $game = null): JsonResponse
     {
-        // manage 404 error
+        // validate the Game ID sent in URL
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
+        // response : return the Game
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -179,34 +195,25 @@ class GameController extends AbstractController
 
     /**
      * Add new game
+     * 
      * @Route("/games", name="games_add", methods={"POST"})
      */
     public function addGame(
         Request $request,
         SerializerInterface $serializer,
-        ManagerRegistry $doctrine,
+        GameRepository $gameRepository,
         ValidatorInterface $validator
         ): JsonResponse
     {
+        // get the new data from the request (JSON)
         $json = $request->getContent();
-
-        // Be careful to receive all the fields of the entity in the JSON file
-        /* 
-            {
-                "date":"2022-12-11 10:30:00",
-                "createdAt":"2022-10-28 00:00:00",
-                "teams":[187,186],
-                "users":[],
-                "arena":122,
-                "type":122
-            }
-        */
-        // TODO create event for automatically add createdAt field.
-
         $game = $serializer->deserialize($json, Game::class, 'json');
 
-        $errors = $validator->validate($game);
+        // initialize the property createdAt
+        $game->setCreatedAt(new \DateTimeImmutable('now'));
 
+        // check the Assert (Entity's constraints)
+        $errors = $validator->validate($game);
         if (count($errors) > 0) {
             $cleanErrors = [];
             /**
@@ -219,11 +226,11 @@ class GameController extends AbstractController
             }
             return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
         }
-        $game->setCreatedAt(new \DateTimeImmutable('now'));
-        $manager = $doctrine->getManager();
-        $manager->persist($game);
-        $manager->flush();
+        
+        // if all the data are OK => save item in DB
+        $gameRepository->add($game, true);
 
+        // response : return the new Game object 
         return $this->json($game, Response::HTTP_CREATED, [], [
             'groups' => 'games_collection'
         ]);
@@ -231,81 +238,61 @@ class GameController extends AbstractController
 
     /**
      * Toggle user (referee) on a game
+     * 
      * @Route("/games/{id}", name="toggle_user_on_game", methods={"PATCH"}, requirements={"id"="\d+"})
      */
     public function toggleUserOnGame(
         Game $game = null, 
-        Request $request, 
-        ManagerRegistry $doctrine,
         GameRepository $gameRepository,
-        UserRepository $userRepository
+        ManagerRegistry $doctrine
         ): JsonResponse
     {
-        // manage 404 error
+        // manage 404 error if the Game ID doesn't exist in DB
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
         
-        // TODO: use token send by the Front-App instead of user_email
-        // decode the request content (JSON -> array)
-        $content = $request->toArray();
-        $userEmailFromJSON = $content['user_email'];   
+        // get all the Game's Users previous changes
+        $previousUsers = $gameRepository->findAllRefByGame($game->getId());
         
-        // find user by email receive by json file 
-        $userFromJSON = $userRepository->findOneBy(array('email' => $userEmailFromJSON));
-        $userId = $userFromJSON->getId();
-  
-        // get user from JWT for check
-        $userFromJWT = $this->getUser();
-        $userEmailFromJWT = $userFromJWT->getUserIdentifier();
-
-        if($userEmailFromJSON === $userEmailFromJWT) {
-
-            
-            // get all the Game's Users with too many dimensions
-            $users_brut = $gameRepository->findAllRefByGame($game->getId());
-            
-            // remove one level from the Game's Users array
-            $users = [];
-            for ($i=0; $i < count($users_brut); $i++) { 
-                $users[] = $users_brut[$i]['id'];
-            }
-            
-            // toggle the engagement of a referee
-            // Max users in each game = 2
-            // TODO: simplifier l'algorythme ci-dessous
-            //* utiliser les objets et non les ID
-            //* si (utilisateur courant dans le game)
-                //* "l'arbitre se désengage"
-            //* sinon si (2 utilisateurs)
-                //* "impossible d'ajouter, match complet
-            //* sinon
-                //* "l'arbitre s'engage"
-            if (count($users) >= 2) {
-                if (in_array($userId, $users)) {
-                    $game->removeUser($userRepository->find($userId));
-                } else {
-                    return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
-                }
-            } elseif (count($users) < 2) {
-                if (in_array($userId, $users)) {
-                    $game->removeUser($userRepository->find($userId));
-                } else {
-                    $game->addUser($userRepository->find($userId));
-                }
-            }
-            //TODO: Fin de l'algorythme
-            
-            // TODO: make this action with a service
-            $game->setUpdatedAt(new \DateTimeImmutable('now'));
-    
-            $manager = $doctrine->getManager();
-            $manager->flush();
-        } else {
-            // this error occur when a hacker try to send a different email between JSON request and JWT
-            return $this->json(['error' => 'Please, send a valid email'], Response::HTTP_BAD_REQUEST);
+        // get Users' ID in one level array
+        $previousUsersID = [];
+        for ($i=0; $i < count($previousUsers); $i++) { 
+            $previousUsersID[] = $previousUsers[$i]['id'];
         }
         
+        //TODO: does the lexik's component check the role and expiration date automatically ? If not, do it.
+
+        // get user from token
+        $currentUser = $this->getUser();
+        /**
+         * @var User $currentUser
+         */
+        $currentUserID = $currentUser->getId();
+
+        // toggle the engagement of a referee
+        // Max users in each game = 2
+        if (in_array($currentUserID, $previousUsersID)) {
+            // the current User is already engage => he want to disengage
+            $game->removeUser($currentUser);
+        } elseif (count($previousUsersID) >= 2) {
+            // there is already two referee (User) for this game, it's full
+            return $this->json('You already have 2 referee for this match !', Response::HTTP_UNPROCESSABLE_ENTITY);
+        } else {
+            // the game need more referee AND the current User isn't already engage on it
+            $game->addUser($currentUser);
+        }
+        
+        // update the property updatedAt
+        $game->setUpdatedAt(new \DateTimeImmutable('now'));
+        
+        // update DB
+        $doctrine
+                ->getManager()
+                ->flush()
+                ;
+
+        // return the new Game object
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -313,7 +300,8 @@ class GameController extends AbstractController
 
     /**
      * Edit a game
-     * @Route("/games/{id}/edit", name="games_edit", methods={"PUT"}, requirements={"id"="\d+"})
+     * 
+     * @Route("/games/{id}/edit", name="games_edit", methods={"GET", "PUT"}, requirements={"id"="\d+"})
      */
     public function edit(
         Game $game = null,
@@ -323,47 +311,42 @@ class GameController extends AbstractController
         ValidatorInterface $validator
         ): JsonResponse
     {
-        // manage 404 error
+        // validate the Game ID sent in URL
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
 
-        $json = $request->getContent();
+        if($request->isMethod('put')) {
 
-        // Be careful to receive all the fields of the entity in the JSON file
-        /* 
-            {
-                "date":"2022-12-11 10:30:00",
-                "teams":[260,263],
-                "users":[],
-                "arena":176,
-                "type":152
+            // get the new data from the request (JSON)
+            $json = $request->getContent();
+            $game = $serializer->deserialize($json, Game::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $game]);
+            
+            // update the property updatedAt
+            $game->setUpdatedAt(new \DateTimeImmutable('now'));
+
+            // check the Assert (Entity's constraints)
+            $errors = $validator->validate($game);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
             }
-        */
 
-        $game = $serializer->deserialize($json, Game::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $game]);
-        //dd($game);
-
-        $errors = $validator->validate($game);
-
-        if (count($errors) > 0) {
-            $cleanErrors = [];
-            /**
-             * @var ConstraintViolation $error
-             */
-            foreach($errors as $error) {
-                $property = $error->getPropertyPath();
-                $message = $error->getMessage();
-                $cleanErrors[$property][] = $message;
-            }
-            return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
-
+            // update DB
+            $doctrine
+                ->getManager()
+                ->flush()
+                ;
         }
-        $game->setUpdatedAt(new \DateTimeImmutable('now'));
-
-        $manager = $doctrine->getManager();
-        $manager->flush();
-
+        // response : return the actual object ("GET") or the new object ("PUT")
         return $this->json($game, Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]);
@@ -371,26 +354,22 @@ class GameController extends AbstractController
 
     /**
      * Delete a game
+     * 
      * @Route("/games/{id}", name="games_delete", methods={"DELETE"}, requirements={"id"="\d+"})
      */
-    public function delete(Game $game = null, GameRepository $gameRepository)
+    public function delete(Game $game = null, GameRepository $gameRepository): JsonResponse
     {
-        // manage 404 error
+        // validate the Game ID sent in URL
         if(is_null($game)) {
             return $this->json(['error' => 'Game\'s ID not found !'], Response::HTTP_NOT_FOUND);
         }
+        
+        // delete the Game
+        $gameRepository->remove($game, true);
 
-        // TODO add role admin
-        $user = $this->getUser();
-        $userRole = $user->getRoles();
-        if (in_array("ROLE_ADMIN", $userRole)) {
-
-            $gameRepository->remove($game, true);
-            return $this->json(null, Response::HTTP_NO_CONTENT); 
-        } else {
-            return $this->json(['you don\'t have the rights to do this action'], Response::HTTP_FORBIDDEN);
-        }
+        // response : return OK code without content
+        return $this->json(null, Response::HTTP_NO_CONTENT); 
+       
     }
-
 
 }

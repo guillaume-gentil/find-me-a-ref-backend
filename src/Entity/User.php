@@ -70,6 +70,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Regex(
+     *  pattern="/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/i",
+     *  message="Merci de renseigner au moins 8 caractères, dont une lettre, un chiffre et un caractère spécial.",
+     *  groups={"users_new_password"}
+     * )
      */
     private $password;
 
@@ -77,6 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer", nullable=true, unique=true)
      * @Groups({
      * "games_collection",
+     * "users_collection"
      * })
      */
     private $licenceId;
@@ -85,6 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @groups({
      * "games_collection",
+     * "users_collection"
      * })
      */
     private $level;
@@ -97,6 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"users_collection"})
      */
     private $zipCode;
 
