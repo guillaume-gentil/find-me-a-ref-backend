@@ -15,15 +15,16 @@ class GeolocationManager
     /**
      * Geocode the address thanks to OpenCage/Geocode API
      * 
-     * @param string $location The address from the DB
+     * @param string $address The address from the DB
+     * @param string $zipcode The zipcode from the DB
      * @param string $type Two choice : 'lat' for latitude or 'lng' for longitude
      * 
      * @return float
      */
-    public function useGeocoder($location, $type)
+    public function useGeocoder($address, $zipcode, $type)
     {
         $geocoder = new \OpenCage\Geocoder\Geocoder($this->apiKey);
-        $result = $geocoder->geocode($location);
+        $result = $geocoder->geocode($address . $zipcode);
         
         if ($type == 'lat') {
             return $result['results'][0]['geometry']['lat'];

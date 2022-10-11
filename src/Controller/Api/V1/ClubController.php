@@ -70,8 +70,8 @@ class ClubController extends AbstractController
         $club = $serializer->deserialize($json, Club::class, 'json');
         
         // for setting longitude and latitude use custom service from GeolocationManager
-        $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), 'lng'));
-        $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), 'lat'));
+        $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), $club->getZipCode(), 'lat'));
+        $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), $club->getZipCode(), 'lng'));
 
         // initialize the property createdAt
         $club->setCreatedAt(new \DateTimeImmutable('now'));
@@ -129,8 +129,8 @@ class ClubController extends AbstractController
 
             // retreive from API the Geocode values only if the address change
             if($club->getAddress() != $previousAddress) {
-                $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), 'lng'));
-                $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), 'lat'));
+                $club->setLatitude($geolocationManager->useGeocoder($club->getAddress(), $club->getZipCode(), 'lat'));
+                $club->setLongitude($geolocationManager->useGeocoder($club->getAddress(), $club->getZipCode(), 'lng'));
             }
 
             // update the property updatedAt

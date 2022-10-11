@@ -67,8 +67,8 @@ class ArenaController extends AbstractController
         $arena = $serializer->deserialize($json, Arena::class, 'json');
 
         // for setting longitude and latitude use custom service from GeolocationManager
-        $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), 'lat'));
-        $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), 'lng'));
+        $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), $arena->getZipCode(), 'lat'));
+        $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), $arena->getZipCode(), 'lng'));
 
         // initialize the property createdAt
         $arena->setCreatedAt(new \DateTimeImmutable('now'));
@@ -127,8 +127,8 @@ class ArenaController extends AbstractController
 
             // retreive from API the Geocode values only if the address change
             if($arena->getAddress() != $previousAddress) {
-                $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), 'lng'));
-                $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), 'lat'));
+                $arena->setLatitude($geolocationManager->useGeocoder($arena->getAddress(), $arena->getZipCode(), 'lat'));
+                $arena->setLongitude($geolocationManager->useGeocoder($arena->getAddress(), $arena->getZipCode(), 'lng'));
             }
             
             // update the property updatedAt

@@ -13,8 +13,10 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
-class AppFixtures extends Fixture
+
+class AppFixtures extends Fixture implements FixtureGroupInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -269,5 +271,17 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    /**
+     * Set a group for fixtures
+     * https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html#fixture-groups-only-executing-some-fixtures
+     * to execute a single group : `php bin/console d:f:l --group=dev`
+     *
+     * @return array
+     */
+    public static function getGroups(): array
+    {
+        return ['dev'];
     }
 }
