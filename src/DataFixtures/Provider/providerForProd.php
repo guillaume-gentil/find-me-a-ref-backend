@@ -31,37 +31,20 @@ class providerForProd
         "Féminine N1"
     ];
 
-    private $userAdmin = [
-        "firstname" => "admin",
-        "lastname" => "admin",
-        "email" => "findmearef@gmail.com",
-        "password" => "$2y$13$LZvVrqaT/gEPKNfRgVm6lOoG37h1rcrOieZrRFcBT3Litp0VeeSj.", # hash a password : bin/console security:hash-password
-        "roles" => "ROLE_ADMIN"
-    ];
-
-
-
     /**
-     * Get the value of userAdmin
+     * Get the value of types
      */ 
-    public function getUserAdmin()
+    public function getTypes()
     {
-        return $this->userAdmin;
+        return $this->types;
     }
 
     /**
-     * Get the value of category
+     * Get the value of categories
      */ 
-    public function getCategory()
+    public function getCategories()
     {
         return $this->categories;
     }
 
-    /**
-     * Get the value of type
-     */ 
-    public function getType()
-    {
-        return $this->types;
-    }
 }

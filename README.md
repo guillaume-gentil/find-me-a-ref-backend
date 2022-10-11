@@ -16,12 +16,13 @@ replace `git clone` command by `git pull`.
 
 Add to your local .env all datas you don't want to see in git repository. (password to database, JWT secret key ...).
 
-## 4.Create database and add fixtures for dev version
+## 4.Create database and add fixtures
 
 You have to do :
     - `bin/consle doctrine:database:create`
     - `doctrine:migrations:migrate` Warning don't use make:migration.
-    - `bin/console doctrine:fixture:load`
+    - if it's for dev : `php bin/console doctrine:fixtures:load --group=dev`
+    - for prod : `php bin/console doctrine:fixtures:load --group=prod`
 
 ## 5.Initialise keys for JWT
 

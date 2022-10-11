@@ -77,8 +77,8 @@ class UserController extends AbstractController
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
         if (!empty($user->getAddress())) {
-            $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
-            $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
+            $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lat'));
+            $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lng'));
         }
 
         // initialize the property createdAt
@@ -150,8 +150,8 @@ class UserController extends AbstractController
 
             // retreive from API the Geocode values only if the address change
             if ($user->getAddress() != $previousAddress) {
-                $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
-                $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
+                $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lat'));
+                $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lng'));
             }
             
             // check modification of password
@@ -246,8 +246,8 @@ class UserController extends AbstractController
             
             // retreive from API the Geocode values only if the address change
             if ($user->getAddress() != $previousAddress) {
-                $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), 'lat'));
-                $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), 'lng'));
+                $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lat'));
+                $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lng'));
             }
             
             // check modification of password
