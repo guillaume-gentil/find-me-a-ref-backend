@@ -3,6 +3,12 @@
 <p>
     Vous venez de vous inscrire sur le site "Find Me A Ref" en tant qu'arbitre.
 
+    Vos coordonnées sont :
+     - prénom : {{ user.firstname }}
+     - nom : {{ user.lastname }}
+     - email : {{ user.email }}
+     - rôle : {% for role in user.roles %} {{ role }}{% endfor %}
+
 </p>
 
 <p>

@@ -5,6 +5,7 @@ namespace App\Controller\Api\V1;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\GeolocationManager;
+use App\Service\MailerSignup;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,7 +67,8 @@ class UserController extends AbstractController
         UserRepository $userRepository,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
-        GeolocationManager $geolocationManager
+        GeolocationManager $geolocationManager,
+        MailerSignup $mailer
         ): JsonResponse
     {
         // get the new data from the request (JSON)
@@ -106,6 +108,8 @@ class UserController extends AbstractController
         
         // if all the data are OK => save item in DB
         $userRepository->add($user, true);
+
+        $mailer->sendEmailToValidateInscription($user);
 
         // response : return the new User object 
         return $this->json($user, Response::HTTP_OK, [], [

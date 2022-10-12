@@ -50,6 +50,8 @@ security:
         - { path: ^/api/v1/users/edit, roles: ROLE_REFEREE, methods:[GET, PUT] }
         # access to inscription form
         - { path: ^/api/v1/users, roles: PUBLIC_ACCESS, methods:[POST] }
+        # access to validate inscription
+        - { path: ^/api/v1/mailer, roles: PUBLIC_ACCESS, methods:[POST] }
         # access to users information only for admin 
         - { path: ^/api/v1/users, roles: ROLE_ADMIN }
         # access to POST PUT DELETE methods for any road only to admin
