@@ -113,7 +113,6 @@ class UserController extends AbstractController
         }
         // if all the data are OK => save item in DB
         $userRepository->add($user, true);
-        dd($user);
         
         // send validation email to the User automatically
         $mailer->sendEmailToValidateInscription($user);
@@ -124,6 +123,16 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Method to validate User email after signup
+     *
+     *@Route("/users/check-account", name="users_check_account")
+     */
+    public function checkAccount($singUpToken, UserRepository $userRepository)
+    {
+        $user = $userRepository->findOneBy(["singUpToken" => $singUpToken]);
+        dd($user);
+    }
 
     //TODO: the two methods : editForAdmin and edit should be refactored
     /**

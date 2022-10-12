@@ -39,6 +39,7 @@ security:
             # switch_user: true
 
     role_hierarchy:
+        ROLE_REFEREE: ROLE_TEMPORARY
         ROLE_TEAMHEAD:   ROLE_REFEREE
         ROLE_ADMIN:     ROLE_TEAMHEAD
 
@@ -46,12 +47,12 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
+        # access to validate inscription
+        - { path: ^/api/v1/users/check-account, roles: ROLE_TEMPORARY, methods:[GET] }
         # access to users information
         - { path: ^/api/v1/users/edit, roles: ROLE_REFEREE, methods:[GET, PUT] }
         # access to inscription form
         - { path: ^/api/v1/users, roles: PUBLIC_ACCESS, methods:[POST] }
-        # access to validate inscription
-        - { path: ^/api/v1/mailer, roles: PUBLIC_ACCESS, methods:[POST] }
         # access to users information only for admin 
         - { path: ^/api/v1/users, roles: ROLE_ADMIN }
         # access to POST PUT DELETE methods for any road only to admin

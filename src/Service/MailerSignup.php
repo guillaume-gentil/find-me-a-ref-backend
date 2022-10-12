@@ -27,7 +27,7 @@ class MailerSignup
 
     public function sendEmailToValidateInscription($user): void
     {
-        dump("Stop depuis le service");
+
         /**
          * how to use Mailer :
          * https://symfony.com/doc/5.4/mailer.html#creating-sending-messages
@@ -45,18 +45,11 @@ class MailerSignup
             'text/html'
             )
         ->context([
-            'user' => [
-                "id" => 100,
-                "firstname" => "Guillaume",
-                "lastname" => "Gentil",
-                "email" => "guillaumeg.dev@gmail.com",
-                "roles" => ["ROLE_REFEREE"]
-            ],                
+            'user' => $user             
         ]);
         
         // envoie du mail
         $this->mailer->send($email);
 
-        dd($user);
     }
 }
