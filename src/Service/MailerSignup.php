@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use Twig\Environment;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 
@@ -14,42 +13,32 @@ class MailerSignup
      */
     private $mailer;
 
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    public function __construct(MailerInterface $mailer, Environment $twig)
+    public function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
-        $this->twig = $twig;
     }
 
-    public function sendEmailToValidateInscription($user): void
+    /**
+     * Send an email to the User for check his Email
+     */
+    public function sendEmailSignup($user): void
     {
-
         /**
          * how to use Mailer :
          * https://symfony.com/doc/5.4/mailer.html#creating-sending-messages
          * https://symfony.com/doc/5.4/mailer.html#twig-html-css
          */
         
-        // création du mail
+        // creation of email
         $email = (new TemplatedEmail())
-        ->from('findmearef@gmail.com')
-        ->to('guillaumeg.dev@gmail.com')
-        // ->cc('arnaud.joguet@gmail.com')
-        ->subject('Mail envoyé depuis le service MailerSignup')
-        ->html(
-            $this->twig->render('api/v1/mailer/signup.html.twig', ['user' => $user]),
-            'text/html'
-            )
-        ->context([
-            'user' => $user             
-        ]);
+            ->from('findmearef@gmail.com')
+            ->to($user->getUserIdentifier())
+            ->subject('Mail envoyé depuis le service MailerSignup')
+            ->htmlTemplate('api/v1/mailer/signup.html.twig')
+            ->context(['user' => $user])
+        ;
         
-        // envoie du mail
+        // send email
         $this->mailer->send($email);
-
     }
 }

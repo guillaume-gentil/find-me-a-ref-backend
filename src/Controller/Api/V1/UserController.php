@@ -115,7 +115,7 @@ class UserController extends AbstractController
         $userRepository->add($user, true);
         
         // send validation email to the User automatically
-        $mailer->sendEmailToValidateInscription($user);
+        $mailer->sendEmailSignup($user);
 
         // response : return the new User object 
         return $this->json($user, Response::HTTP_OK, [], [
@@ -139,7 +139,7 @@ class UserController extends AbstractController
             $user->setRoles(["ROLE_REFEREE"]);
             
             dd($user);
-            // if user find and validate return to front with ok inscription message
+            // if user is find and validate return to findMeARef website with ok statuts
             return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_OK);
         } else {
             return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_BAD_REQUEST);
@@ -207,7 +207,7 @@ class UserController extends AbstractController
                 $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             } else {
-                // If user don't modify his password
+                // If user doesn't modify his password
                 
                 // check the Assert (Entity's constraints)
                 $errors = $validator->validate($user);
@@ -224,10 +224,6 @@ class UserController extends AbstractController
                     return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
                 }
             }
-            // hash the user password before save it in DB only if it's changed
-            // if ($user->getPassword() != $previousPassword) {
-                // $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-            // }
             
             // if all data are OK => save changes in DB
             $doctrine
