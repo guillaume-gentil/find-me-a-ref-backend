@@ -282,9 +282,10 @@ composer require symfony/twig-bundle
 composer require symfony/mailer
 ```
 
-- configuration pour envoyer les mails depuis Gmail (*3rd party transport*)
-
-```bash
-composer require symfony/google-mailer
-```
-
+> À voir si nécessaire :
+>
+> - configuration pour envoyer les mails depuis Gmail (*3rd party transport*)
+>
+>```bash
+> composer require symfony/google-mailer
+>```

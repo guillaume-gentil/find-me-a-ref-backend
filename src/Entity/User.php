@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const ROLES = ["ROLE_ADMIN", "ROLE_TEAMHEAD", "ROLE_REFEREE"];
+    const ROLES = ["ROLE_ADMIN", "ROLE_TEAMHEAD", "ROLE_REFEREE", "ROLE_TEMPORARY"];
 
     /**
      * @ORM\Id
@@ -150,6 +150,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * })
      */
     private $phoneNumber;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $singUpToken;
 
     public function __construct()
     {
@@ -400,6 +405,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoneNumber(?string $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    public function getSingUpToken(): ?string
+    {
+        return $this->singUpToken;
+    }
+
+    public function setSingUpToken(?string $singUpToken): self
+    {
+        $this->singUpToken = $singUpToken;
 
         return $this;
     }
