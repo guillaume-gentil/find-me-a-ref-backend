@@ -128,13 +128,12 @@ class UserController extends AbstractController
      *
      *@Route("/users/check-account/{signUpToken}", name="users_check_account")
      */
-    public function checkAccount($signUpToken, UserRepository $userRepository)
+    public function checkAccount($signUpToken, UserRepository $userRepository): Response
     {
         // retrieve a user via his signup token
         $user = $userRepository->findOneBy(["signUpToken" => $signUpToken]);
         
         if($user) {
-
             $user->setSignUpToken('validate');
             $user->setRoles(["ROLE_REFEREE"]);
             
@@ -142,10 +141,106 @@ class UserController extends AbstractController
             // if user is find and validate return to findMeARef website with ok statuts
             return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_OK);
         } else {
-            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_BAD_REQUEST);
+            // statuts in header cannot be read, if not user in DB redirect to 404 page
+            return $this->redirect('http://localhost:8080/failRedirect', Response::HTTP_NOT_FOUND);
         }
-        
     }
+
+    /**
+     * @Route("/users/lost-password", name="users_find_by_email", methods={"POST"})
+     */
+    public function findByEmail(UserRepository $userRepository, MailerSignup $mailer, Request $request)
+    {
+        /*
+            requête front :
+                {
+                    "email": "ref1@user.com"
+                }
+        */
+
+        $json = $request->getContent();
+        $email = json_decode($json, true)['email'];
+        dump($email);
+        // get the User from his email
+        $user = $userRepository->findOneBy(['email' => $email]);
+
+        if ($user) {
+            // generate a signup token automatically for validation
+            $user->setSignUpToken($this->generateSignUpToken());
+
+            // send validation email to the User automatically
+            $mailer->sendEmailChangePassword($user);
+
+            // ici il faut afficher un formulaire avec en input
+            // Bonjour ${User.firstname}
+            //  - un champs : emailtoken
+            //  - un champs mot de passe (+ confirmer mot de passe)
+            // return $this->redirect("localhost:8080/la-bonne-route-en-front", Response::HTTP_OK);
+
+        } else {
+            return $this->json(['error' => 'Please, send a valid email.'], Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Method to change User password with a token (received by email)
+     *
+     *@Route("/users/change-password", name="users_change_password")
+    */
+    public function setupNewPassword(
+        Request $request,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher,
+        UserRepository $userRepository,
+        ManagerRegistry $doctrine
+    )
+    {
+        /*
+            requete front :
+                {
+                    email-token:
+                    new-password:
+                }
+        */
+
+        // get email-token and new-password from form
+        $data = json_decode($request->getContent(), true);
+
+        // récupérer le User correspondant au email-token dans le BDD
+        $user = $userRepository->findOneBy(['signUpToken' => $data['email-token']]);
+
+        if ($user) {
+            // check modification of password
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                $cleanErrors = [];
+                /**
+                 * @var ConstraintViolation $error
+                 */
+                foreach ($errors as $error) {
+                    $property = $error->getPropertyPath();
+                    $message = $error->getMessage();
+                    $cleanErrors[$property][] = $message;
+                }
+                return $this->json($cleanErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            // reset le password de ce User
+            $user->setPassword($passwordHasher->hashPassword($user, $data['new-password']));
+            $user->setSignUpToken('validate');
+
+            // if all data are OK => save changes in DB
+            $doctrine
+                ->getManager()
+                ->flush()
+                ;
+
+
+            // rediriger vers la page d'accueil
+            dd("Bravo ! le mot de passe a été changé");
+        }
+    }
+
 
     //TODO: the two methods : editForAdmin and edit should be refactored
     /**

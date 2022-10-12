@@ -49,6 +49,9 @@ security:
         # - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
         # access to validate inscription
         - { path: ^/api/v1/users/check-account, roles: PUBLIC_ACCESS, methods:[GET] }
+        # access to change password
+        - { path: ^/api/v1/users/change-password, roles: PUBLIC_ACCESS, methods:[GET] }
+        - { path: ^/api/v1/users/lost-password, roles: PUBLIC_ACCESS, methods:[GET] }
         # access to users information
         - { path: ^/api/v1/users/edit, roles: ROLE_REFEREE, methods:[GET, PUT] }
         # access to inscription form

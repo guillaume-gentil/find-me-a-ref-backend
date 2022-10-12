@@ -33,8 +33,26 @@ class MailerSignup
         $email = (new TemplatedEmail())
             ->from('findmearef@gmail.com')
             ->to($user->getUserIdentifier())
-            ->subject('Mail envoyé depuis le service MailerSignup')
+            ->subject('Bienvenue sur Find Me A Ref, la solution d\'arbitrgae ultime!')
             ->htmlTemplate('api/v1/mailer/signup.html.twig')
+            ->context(['user' => $user])
+        ;
+        
+        // send email
+        $this->mailer->send($email);
+    }
+
+    /**
+     * Send an email to the User for redet his password
+     */
+    public function sendEmailChangePassword($user): void
+    {
+        // creation of email
+        $email = (new TemplatedEmail())
+            ->from('findmearef@gmail.com')
+            ->to($user->getUserIdentifier())
+            ->subject('Find Me a Ref : réinitialisez votre mot de passe')
+            ->htmlTemplate('api/v1/mailer/reset-password.html.twig')
             ->context(['user' => $user])
         ;
         
