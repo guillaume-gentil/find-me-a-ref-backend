@@ -154,7 +154,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $singUpToken;
+    private $signUpToken;
 
     public function __construct()
     {
@@ -409,14 +409,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSingUpToken(): ?string
+    public function getSignUpToken(): ?string
     {
-        return $this->singUpToken;
+        return $this->signUpToken;
     }
 
-    public function setSingUpToken(?string $singUpToken): self
+    public function setSignUpToken(?string $signUpToken): self
     {
-        $this->singUpToken = $singUpToken;
+        $this->signUpToken = $signUpToken;
 
         return $this;
     }

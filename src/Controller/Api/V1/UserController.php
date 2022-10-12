@@ -76,7 +76,7 @@ class UserController extends AbstractController
         $user = $serializer->deserialize($json, User::class, 'json');
 
         // generate a signup token automatically for validation
-        $user->setSingUpToken($this->generateSignUpToken());
+        $user->setSignUpToken($this->generateSignUpToken());
         
         // setup TEMPORARY role until the user validation (via email)
         $user->setRoles(["ROLE_TEMPORARY"]);
@@ -126,16 +126,16 @@ class UserController extends AbstractController
     /**
      * Method to validate User email after signup
      *
-     *@Route("/users/check-account/{singUpToken}", name="users_check_account")
+     *@Route("/users/check-account/{signUpToken}", name="users_check_account")
      */
-    public function checkAccount($singUpToken, UserRepository $userRepository)
+    public function checkAccount($signUpToken, UserRepository $userRepository)
     {
         // retrieve a user via his signup token
-        $user = $userRepository->findOneBy(["singUpToken" => $singUpToken]);
+        $user = $userRepository->findOneBy(["signUpToken" => $signUpToken]);
         
         if($user) {
 
-            $user->setSingUpToken('validate');
+            $user->setSignUpToken('validate');
             $user->setRoles(["ROLE_REFEREE"]);
             
             dd($user);
