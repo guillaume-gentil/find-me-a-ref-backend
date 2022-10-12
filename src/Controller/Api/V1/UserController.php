@@ -21,7 +21,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * @Route("/api/v1", name="api_v1")
+ * @Route("/api/v1", name="api_v1_")
  */
 class UserController extends AbstractController
 {
@@ -126,12 +126,25 @@ class UserController extends AbstractController
     /**
      * Method to validate User email after signup
      *
-     *@Route("/users/check-account", name="users_check_account")
+     *@Route("/users/check-account/{singUpToken}", name="users_check_account")
      */
     public function checkAccount($singUpToken, UserRepository $userRepository)
     {
+        // retrieve a user via his signup token
         $user = $userRepository->findOneBy(["singUpToken" => $singUpToken]);
-        dd($user);
+        
+        if($user) {
+
+            $user->setSingUpToken('validate');
+            $user->setRoles(["ROLE_REFEREE"]);
+            
+            dd($user);
+            // if user find and validate return to front with ok inscription message
+            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_OK);
+        } else {
+            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_BAD_REQUEST);
+        }
+        
     }
 
     //TODO: the two methods : editForAdmin and edit should be refactored
