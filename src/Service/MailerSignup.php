@@ -35,7 +35,7 @@ class MailerSignup
          */
         
         // création du mail
-        $email = (new Email())
+        $email = (new TemplatedEmail())
         ->from('findmearef@gmail.com')
         ->to('guillaumeg.dev@gmail.com')
         // ->cc('arnaud.joguet@gmail.com')

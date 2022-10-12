@@ -75,22 +75,28 @@ class UserController extends AbstractController
         $json = $request->getContent();
         $user = $serializer->deserialize($json, User::class, 'json');
 
+        // generate a signup token automatically for validation
+        $user->setSingUpToken($this->generateSignUpToken());
+        
+        // setup TEMPORARY role until the user validation (via email)
+        $user->setRoles(["ROLE_TEMPORARY"]);
+
         // hash the user password before save it in DB
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-
+        
         if (!empty($user->getAddress())) {
             $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lat'));
             $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lng'));
         }
-
+        
         // initialize the property createdAt
         $user->setCreatedAt(new \DateTimeImmutable('now'));
-
+        
         // an admin could be create only by another admin
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
             return $this->json(['error' => 'Veuillez contacter l\'administrateur du site'] , Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
+        
         // check the Assert (Entity's constraints)
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
@@ -105,10 +111,11 @@ class UserController extends AbstractController
             }
             return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
         }
-        
         // if all the data are OK => save item in DB
         $userRepository->add($user, true);
-
+        dd($user);
+        
+        // send validation email to the User automatically
         $mailer->sendEmailToValidateInscription($user);
 
         // response : return the new User object 
@@ -334,6 +341,6 @@ class UserController extends AbstractController
      */
     private function generateSignUpToken()
     {
-        return rtrim(strtr(base64_encode(random_bytes(length:32)), '+/', '-_'), '=');
+        return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
     }
 }
