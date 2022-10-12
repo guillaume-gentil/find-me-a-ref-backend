@@ -324,4 +324,16 @@ class UserController extends AbstractController
         return $this->json(null, Response::HTTP_NO_CONTENT); 
 
     }
+
+    /**
+     * Generating token for signup account
+     * 
+     * https://stackoverflow.com/questions/50877915/how-to-generate-a-token-in-symfony-3-4
+     * https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Util/TokenGenerator.php
+     * @return void
+     */
+    private function generateSignUpToken()
+    {
+        return rtrim(strtr(base64_encode(random_bytes(length:32)), '+/', '-_'), '=');
+    }
 }
