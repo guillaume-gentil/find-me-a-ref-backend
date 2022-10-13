@@ -5,6 +5,7 @@ namespace App\Controller\Api\V1;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\GeolocationManager;
+use App\Service\MailerSignup;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * @Route("/api/v1", name="api_v1")
+ * @Route("/api/v1", name="api_v1_")
  */
 class UserController extends AbstractController
 {
@@ -66,29 +67,36 @@ class UserController extends AbstractController
         UserRepository $userRepository,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
-        GeolocationManager $geolocationManager
+        GeolocationManager $geolocationManager,
+        MailerSignup $mailer
         ): JsonResponse
     {
         // get the new data from the request (JSON)
         $json = $request->getContent();
         $user = $serializer->deserialize($json, User::class, 'json');
 
+        // generate a signup token automatically for validation
+        $user->setSignUpToken($this->generateSignUpToken());
+        
+        // setup TEMPORARY role until the user validation (via email)
+        $user->setRoles(["ROLE_TEMPORARY"]);
+
         // hash the user password before save it in DB
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-
+        
         if (!empty($user->getAddress())) {
             $user->setLatitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lat'));
             $user->setLongitude($geolocationManager->useGeocoder($user->getAddress(), $user->getZipCode(), 'lng'));
         }
-
+        
         // initialize the property createdAt
         $user->setCreatedAt(new \DateTimeImmutable('now'));
-
+        
         // an admin could be create only by another admin
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
             return $this->json(['error' => 'Veuillez contacter l\'administrateur du site'] , Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
+        
         // check the Assert (Entity's constraints)
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
@@ -103,9 +111,11 @@ class UserController extends AbstractController
             }
             return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
         }
-        
         // if all the data are OK => save item in DB
         $userRepository->add($user, true);
+        
+        // send validation email to the User automatically
+        $mailer->sendEmailSignup($user);
 
         // response : return the new User object 
         return $this->json($user, Response::HTTP_OK, [], [
@@ -113,6 +123,34 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Method to validate User email after signup
+     *
+     *@Route("/users/check-account/{signUpToken}", name="users_check_account")
+     */
+    public function checkAccount($signUpToken, UserRepository $userRepository,ManagerRegistry $doctrine)
+    {
+        // retrieve a user via his signup token
+        $user = $userRepository->findOneBy(["signUpToken" => $signUpToken]);
+        
+        if($user) {
+
+            $user->setSignUpToken('validate');
+            $user->setRoles(["ROLE_REFEREE"]);
+
+            // if all data are OK => save changes in DB
+            $doctrine
+                ->getManager()
+                ->flush()
+                ;
+            
+            // if user is find and validate return to findMeARef website with ok statuts
+            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_FOUND);
+        } else {
+            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_BAD_REQUEST);
+        }
+        
+    }
 
     //TODO: the two methods : editForAdmin and edit should be refactored
     /**
@@ -174,7 +212,7 @@ class UserController extends AbstractController
                 $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             } else {
-                // If user don't modify his password
+                // If user doesn't modify his password
                 
                 // check the Assert (Entity's constraints)
                 $errors = $validator->validate($user);
@@ -191,10 +229,6 @@ class UserController extends AbstractController
                     return $this->json($cleanErrors , Response::HTTP_UNPROCESSABLE_ENTITY );
                 }
             }
-            // hash the user password before save it in DB only if it's changed
-            // if ($user->getPassword() != $previousPassword) {
-                // $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-            // }
             
             // if all data are OK => save changes in DB
             $doctrine
@@ -319,5 +353,17 @@ class UserController extends AbstractController
         // response : return OK code without content
         return $this->json(null, Response::HTTP_NO_CONTENT); 
 
+    }
+
+    /**
+     * Generating token for signup account
+     * 
+     * https://stackoverflow.com/questions/50877915/how-to-generate-a-token-in-symfony-3-4
+     * https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Util/TokenGenerator.php
+     * @return void
+     */
+    private function generateSignUpToken()
+    {
+        return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
     }
 }
