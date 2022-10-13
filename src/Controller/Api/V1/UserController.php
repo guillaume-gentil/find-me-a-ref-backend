@@ -128,7 +128,7 @@ class UserController extends AbstractController
      *
      *@Route("/users/check-account/{signUpToken}", name="users_check_account")
      */
-    public function checkAccount($signUpToken, UserRepository $userRepository)
+    public function checkAccount($signUpToken, UserRepository $userRepository,ManagerRegistry $doctrine)
     {
         // retrieve a user via his signup token
         $user = $userRepository->findOneBy(["signUpToken" => $signUpToken]);
@@ -137,10 +137,15 @@ class UserController extends AbstractController
 
             $user->setSignUpToken('validate');
             $user->setRoles(["ROLE_REFEREE"]);
+
+            // if all data are OK => save changes in DB
+            $doctrine
+                ->getManager()
+                ->flush()
+                ;
             
-            dd($user);
             // if user is find and validate return to findMeARef website with ok statuts
-            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_OK);
+            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_FOUND);
         } else {
             return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_BAD_REQUEST);
         }
