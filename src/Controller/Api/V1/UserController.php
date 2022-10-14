@@ -147,7 +147,7 @@ class UserController extends AbstractController
             // if user is find and validate return to findMeARef website with ok statuts
             return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_FOUND);
         } else {
-            return $this->redirect('http://localhost:8080/authRedirect', Response::HTTP_BAD_REQUEST);
+            return $this->redirect('http://localhost:8080/failRedirect', Response::HTTP_BAD_REQUEST);
         }
         
     }
