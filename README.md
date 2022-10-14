@@ -86,6 +86,33 @@ bin/console d:f:l  # doctrine:fixture:load`,
 
 - `php -S 0.0.0.0:8000 -t public`
 
+### DEV | Use MailHog for tests
+
+- install MailHog
+
+[MailHog project](https://github.com/mailhog/MailHog)
+
+```bash
+sudo apt-get -y install golang-go
+go get github.com/mailhog/MailHog
+```
+
+- configure `.env` file
+
+```ini
+// file : .env
+
+MAILER_DSN=smtp://localhost:1025
+```
+
+- run MailHog :
+
+```bash
+~/go/bin/MailHog
+```
+
+- see smtp traffic in your web browser : `localhost:8025`
+
 🎉 Bravo! You are ready to dev!
 
 ---
