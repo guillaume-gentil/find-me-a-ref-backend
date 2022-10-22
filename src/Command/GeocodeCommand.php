@@ -60,6 +60,7 @@ class GeocodeCommand extends Command
         $users = $this->userRepository->findAll();
         $clubs = $this->clubRepository->findAll();
 
+        // update geocodes
         foreach ($arenas as $arena) {
             $arena->setLatitude($this->geolocationManager->useGeocoder($arena->getAddress(), $arena->getZipCode(), 'lat'));
             $arena->setLongitude($this->geolocationManager->useGeocoder($arena->getAddress(), $arena->getZipCode(), 'lng'));
@@ -75,10 +76,11 @@ class GeocodeCommand extends Command
             $club->setLongitude($this->geolocationManager->useGeocoder($club->getAddress(), $club->getZipCode(), 'lng'));
         }
 
-        // sauvegarde les modifications
+        // save updates in DB
         $manager = $this->doctrine->getManager();
         $manager->flush();
 
+        // command has success !
         $io->success('Success ! The arenas geocode have been correctly update');
 
         return Command::SUCCESS;

@@ -11,6 +11,7 @@ use App\Entity\Arena;
 use App\Entity\Category;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
+use App\Service\GeolocationManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -166,6 +167,58 @@ class GameController extends AbstractController
         ]); 
     }
 
+    /**
+     * Get games by distance from user address (the user need to be connected)
+     *
+     * @Route("/games/distance", name="games_by_distance_from_user", methods={"GET"})
+     */
+    public function getGamesByDistanceFromUser(
+        Request $request,
+        GameRepository $gameRepository,
+        GeolocationManager $geolocationManager
+        )
+    {
+        //* params
+        // get user geoloc (lng, lat) from the JWT
+        /** @var User */
+        $user = $this->getUser();
+
+        // get the radius in km
+        $radius = json_decode($request->getContent(), true)["radius"];
+
+        //* algorithm
+        // get all the games sort by date
+        $games = $gameRepository->findBy([], ['date' => 'ASC']);
+
+        // init array : games in range
+        $games_in_range = [];
+
+        // compare each games (arenas) address with user address
+        foreach ($games as $game) {
+            // calculate distance between user and game (arena)
+            $distance = $geolocationManager->crowFliesDistance(
+                $user->getLongitude(),
+                $user->getLatitude(),
+                $game->getArena()->getLongitude(),
+                $game->getArena()->getLatitude()
+            );
+
+            // store the game if it's in range
+            if ($distance <= $radius) {
+                $games_in_range[] = $game;
+                // $games_in_radius[] = $distance;
+            }
+        }
+
+        //* response
+        // TODO: add the distance in return and display it in game card (front app react)
+        // return the games in range sort by date
+        return $this->json(['games_in_range' => $games_in_range], Response::HTTP_OK, [], [
+            'groups' => 'games_collection'
+        ]); 
+    }
+
+
     #################################################################################################
     ### Referee Engagement/disengagement (detail view)
     #################################################################################################
@@ -261,8 +314,6 @@ class GameController extends AbstractController
             $previousUsersID[] = $previousUsers[$i]['id'];
         }
         
-        //TODO: does the lexik's component check the role and expiration date automatically ? If not, do it.
-
         // get user from token
         $currentUser = $this->getUser();
         /**
