@@ -119,7 +119,6 @@ class GameController extends AbstractController
     public function getGamesByArenaZipCode(GameRepository $gameRepository,int $arenaCounty): JsonResponse
     {
         $games = $gameRepository->findGamesByArenaCounty($arenaCounty);
-        dd($games);
 
         return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'

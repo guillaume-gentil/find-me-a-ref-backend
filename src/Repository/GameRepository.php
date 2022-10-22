@@ -158,7 +158,7 @@ class GameRepository extends ServiceEntityRepository
             FROM App\Entity\Game g
             JOIN g.arena a
             WITH a.id = g.arena
-            WHERE SUBSTRING(a.zipCode,0,2) = :county and g.date >= CURRENT_DATE()
+            WHERE SUBSTRING(a.zipCode,1,2) = :county and g.date >= CURRENT_DATE()
             ORDER BY g.date"
         )->setParameter('county', $arenaCounty);
 
