@@ -51,6 +51,8 @@ security:
         - { path: ^/api/v1/users/check-account, roles: PUBLIC_ACCESS, methods:[GET] }
         # access to users information
         - { path: ^/api/v1/users/edit, roles: ROLE_REFEREE, methods:[GET, PUT] }
+        # access to filter "games by distance from user"
+        - { path: ^/api/v1/distance/games, roles: ROLE_REFEREE, methods:[GET] }
         # access to inscription form
         - { path: ^/api/v1/users, roles: PUBLIC_ACCESS, methods:[POST] }
         # access to users information only for admin 

@@ -170,7 +170,7 @@ class GameController extends AbstractController
     /**
      * Get games by distance from user address (the user need to be connected)
      *
-     * @Route("/games/distance", name="games_by_distance_from_user", methods={"GET"})
+     * @Route("/distance/games", name="games_by_distance_from_user", methods={"GET"})
      */
     public function getGamesByDistanceFromUser(
         Request $request,
