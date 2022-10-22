@@ -141,6 +141,32 @@ class GameRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findGamesByArenaCounty(int $arenaCounty)
+    {
+        /*
+        SELECT *
+        FROM game
+        JOIN arena ON arena.id = game.arena_id
+        WHERE LEFT(arena.zip_code,2) = 38 and game.date >= CURDATE()
+        ORDER BY game.date
+        */
+
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            "SELECT g
+            FROM App\Entity\Game g
+            JOIN g.arena a
+            WITH a.id = g.arena
+            WHERE SUBSTRING(a.zipCode,1,2) = :county and g.date >= CURRENT_DATE()
+            ORDER BY g.date"
+        )->setParameter('county', $arenaCounty);
+
+        
+        return $query->getResult();
+
+    }
+
     public function findGamesByTeam(int $teamId)
     {
         /*
