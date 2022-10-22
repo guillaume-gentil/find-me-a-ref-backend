@@ -178,6 +178,15 @@ class GameController extends AbstractController
         GeolocationManager $geolocationManager
         )
     {
+        //* expected request
+        /*
+        Bearer : JWT
+        JSON request :
+        {
+            "radius": 350
+        }
+        */
+
         //* params
         // get user geoloc (lng, lat) from the JWT
         /** @var User */
