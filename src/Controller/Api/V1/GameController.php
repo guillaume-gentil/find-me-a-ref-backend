@@ -117,7 +117,7 @@ class GameController extends AbstractController
      *
      * @Route("/arenas/games/{arenaCounty}", name="games_by_arena_county",methods={"GET"}, requirements={"arenaCounty"="\d+"} )
      */
-    public function getGamesByArenaZipCode(GameRepository $gameRepository,int $arenaCounty): JsonResponse
+    public function getGamesByArenaCountyNumber(GameRepository $gameRepository,int $arenaCounty): JsonResponse
     {
         $games = $gameRepository->findGamesByArenaCounty($arenaCounty);
 
