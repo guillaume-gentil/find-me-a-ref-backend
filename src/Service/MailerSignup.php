@@ -31,7 +31,7 @@ class MailerSignup
         
         // creation of email
         $email = (new TemplatedEmail())
-            ->from('findmearef@gmail.com')
+            ->from('no-reply@rollerhockey.fr')
             ->to($user->getUserIdentifier())
             ->subject('Mail envoyé depuis le service MailerSignup')
             ->htmlTemplate('api/v1/mailer/signup.html.twig')

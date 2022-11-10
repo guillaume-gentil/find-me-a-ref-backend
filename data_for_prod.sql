@@ -25,6 +25,6 @@ INSERT INTO `type` (`name`, `created_at`) VALUES
 ('finale',	'2022-10-11 00:00:00');
 
 INSERT INTO `user` (`firstname`, `lastname`, `email`, `password`, `created_at`, `roles`) VALUES
-('admin',	'admin',	'findmearef@gmail.com',	'$2y$13$LZvVrqaT/gEPKNfRgVm6lOoG37h1rcrOieZrRFcBT3Litp0VeeSj.', '2022-10-11 00:00:00', '[\"ROLE_ADMIN\"]');
+('admin',	'admin',	'contact@rollerhockey.fr',	'$2y$13$GyibXuC9cK2bKScJDTEviuL/NQovmMBRNZKEUReqPHmp0rM65W5Bm', '2022-10-11 00:00:00', '[\"ROLE_ADMIN\"]');
 
 -- 2022-10-11 11:52:51
