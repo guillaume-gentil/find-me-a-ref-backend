@@ -220,7 +220,7 @@ sudo nano 01-find-me-a-ref-back.conf
     # However, you must set it for any further virtual host explicitly.
     ServerName guillaume-gentil-server.eddi.cloud
 
-    ServerAdmin findmearef@gmail.com
+    ServerAdmin contact@rollerhockey.fr
     DocumentRoot /var/www/html/01-find-me-a-ref-back/public
 
     # autorise, pour ce dossier, l'utilisation des .htaccess 
