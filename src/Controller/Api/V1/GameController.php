@@ -185,7 +185,7 @@ class GameController extends AbstractController
     /**
      * Get games by distance from user address (the user need to be connected)
      *
-     * @Route("/distance/games", name="games_by_distance_from_user", methods={"GET"})
+     * @Route("/distance/games", name="games_by_distance_from_user", methods={"POST"})
      */
     public function getGamesByDistanceFromUser(
         Request $request,
@@ -206,19 +206,19 @@ class GameController extends AbstractController
         // get user geoloc (lng, lat) from the JWT
         /** @var User */
         $user = $this->getUser();
-
+        // dd($user);
         // get the radius in km
         $radius = json_decode($request->getContent(), true)["radius"];
 
         //* algorithm
         // get all the games sort by date
-        $games = $gameRepository->findBy([], ['date' => 'ASC']);
+        $allGames = $gameRepository->findBy([], ['date' => 'ASC']);
 
         // init array : games in range
-        $games_in_range = [];
+        $games = [];
 
         // compare each games (arenas) address with user address
-        foreach ($games as $game) {
+        foreach ($allGames as $game) {
             // calculate distance between user and game (arena)
             $distance = $geolocationManager->crowFliesDistance(
                 $user->getLongitude(),
@@ -229,7 +229,7 @@ class GameController extends AbstractController
 
             // store the game if it's in range
             if ($distance <= $radius) {
-                $games_in_range[] = $game;
+                $games[] = $game;
                 // $games_in_radius[] = $distance;
             }
         }
@@ -237,7 +237,7 @@ class GameController extends AbstractController
         //* response
         // TODO: add the distance in return and display it in game card (front app react)
         // return the games in range sort by date
-        return $this->json(['games_in_range' => $games_in_range], Response::HTTP_OK, [], [
+        return $this->json(['games' => $games], Response::HTTP_OK, [], [
             'groups' => 'games_collection'
         ]); 
     }
