@@ -8,14 +8,17 @@ use Symfony\Component\Mailer\MailerInterface;
 
 class MailerSignup
 {
+    private $apiUrl;
+
     /**
      * @var MailerInterface
      */
     private $mailer;
 
-    public function __construct(MailerInterface $mailer)
+    public function __construct(MailerInterface $mailer, $apiUrl)
     {
         $this->mailer = $mailer;
+        $this->apiUrl = $apiUrl;
     }
 
     /**
@@ -31,11 +34,11 @@ class MailerSignup
         
         // creation of email
         $email = (new TemplatedEmail())
-            ->from('findmearef@gmail.com')
+            ->from('no-reply@rollerhockey.fr')
             ->to($user->getUserIdentifier())
-            ->subject('Mail envoyé depuis le service MailerSignup')
+            ->subject("Bienvenue sur Find Me A Ref! La solution pour l'arbitrage du Roller Hockey")
             ->htmlTemplate('api/v1/mailer/signup.html.twig')
-            ->context(['user' => $user])
+            ->context(['user' => $user, 'apiUrl' => $this->apiUrl])
         ;
         
         // send email
