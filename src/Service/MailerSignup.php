@@ -33,7 +33,7 @@ class MailerSignup
         $email = (new TemplatedEmail())
             ->from('no-reply@rollerhockey.fr')
             ->to($user->getUserIdentifier())
-            ->subject('Mail envoyé depuis le service MailerSignup')
+            ->subject("Bienvenue sur Find Me A Ref! La solution pour l'arbitrage du Roller Hockey")
             ->htmlTemplate('api/v1/mailer/signup.html.twig')
             ->context(['user' => $user])
         ;
