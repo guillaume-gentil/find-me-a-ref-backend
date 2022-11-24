@@ -212,7 +212,7 @@ class GameController extends AbstractController
 
         //* algorithm
         // get all the games sort by date
-        $allGames = $gameRepository->findBy([], ['date' => 'ASC']);
+        $allGames = $gameRepository->findGamesOrderByDate();
 
         // init array : games in range
         $games = [];
